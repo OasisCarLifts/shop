@@ -600,6 +600,8 @@ function Hero() {
   return (
     <>
       <section className="hero" id="top">
+        <div className="hero-light-sweep" aria-hidden="true"></div>
+        <div className="hero-red-beam" aria-hidden="true"></div>
         <div className="hero-shell">
           <div className="hero-copy">
             <div className="hero-kicker" aria-label="Oasis design principles">
@@ -1329,15 +1331,12 @@ function QuoteSystem({ productInterest = null }) {
     notes: "",
   });
   const [quoteStatus, setQuoteStatus] = useState("");
+  const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
 
   const quoteMessage = useMemo(
     () => buildQuoteMessage(form, productInterest),
     [form, productInterest],
   );
-
-  const quoteHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
-    `Quote request from ${form.name || "Oasis website"}`,
-  )}&body=${encodeURIComponent(quoteMessage)}`;
 
   function updateForm(event) {
     const { name, value } = event.target;
@@ -1347,15 +1346,60 @@ function QuoteSystem({ productInterest = null }) {
     }));
   }
 
-  function handleQuoteSubmit(event) {
+  async function handleQuoteSubmit(event) {
     event.preventDefault();
+
+    if (isSubmittingQuote) {
+      return;
+    }
+
     trackEvent("quote_request_submit", {
       has_notes: Boolean(form.notes.trim()),
       product_id: productInterest?.id ?? "general",
       zip_provided: Boolean(form.zip.trim()),
     });
-    setQuoteStatus("Opening a pre-filled email to Oasis with your quote details.");
-    window.location.href = quoteHref;
+
+    setIsSubmittingQuote(true);
+    setQuoteStatus("Sending your quote request...");
+
+    try {
+      const response = await fetch("/api/quote", {
+        body: JSON.stringify({
+          ...form,
+          productInterest: productInterest
+            ? {
+                id: productInterest.id,
+                name: productInterest.name,
+              }
+            : null,
+          sourceUrl: window.location.href,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to send quote request");
+      }
+
+      trackEvent("quote_request_sent", {
+        product_id: productInterest?.id ?? "general",
+      });
+      setQuoteStatus("Quote request sent. Oasis will call back soon.");
+    } catch (error) {
+      trackEvent("quote_request_error", {
+        product_id: productInterest?.id ?? "general",
+      });
+      setQuoteStatus(
+        "The quote request did not send. Please call Oasis or copy the details and email support.",
+      );
+    } finally {
+      setIsSubmittingQuote(false);
+    }
   }
 
   async function handleCopyQuote() {
@@ -1438,8 +1482,8 @@ function QuoteSystem({ productInterest = null }) {
             </label>
 
             <div className="quote-actions">
-              <button className="button" type="submit">
-                Send quote request
+              <button className="button" disabled={isSubmittingQuote} type="submit">
+                {isSubmittingQuote ? "Sending..." : "Send quote request"}
               </button>
               <button className="button button-secondary" onClick={handleCopyQuote} type="button">
                 Copy details
