@@ -12,4 +12,34 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://oasiscarlifts.com/products/oasis-extra-large-4-post-car-lift-9000lb</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://oasiscarlifts.com/products/oasis-narrow-4-post-car-lift-9000-lbs</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://oasiscarlifts.com/products/oasis-lifts-clear-floor-2-post-car-lift-12-000-lbs-capacity</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://oasiscarlifts.com/products/oasis-lift-base-plate-2-post-car-lift-10-000-lb-capacity</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://oasiscarlifts.com/products/4-post-tripple-stacker-3-car-lift</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

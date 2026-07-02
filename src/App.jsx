@@ -903,15 +903,15 @@ function LiftFinder() {
           <div className="card-actions">
             <a
               className="button"
-              href="#quote"
+              href={getProductUrl(recommended.handle)}
               onClick={() =>
-                trackEvent("quote_start", {
+                trackEvent("product_click", {
                   location: "finder_recommendation",
                   product_id: recommended.id,
                 })
               }
             >
-              Get quote
+              View product
             </a>
             <a
               className="text-link"
@@ -1021,9 +1021,9 @@ function ProductSection() {
           <article className="product-card" data-product={product.id} key={product.id}>
             <a
               className="product-image"
-              href="#quote"
+              href={getProductUrl(product.handle)}
               onClick={() =>
-                trackEvent("quote_start", {
+                trackEvent("product_click", {
                   location: "product_image",
                   product_id: product.id,
                 })
@@ -1066,15 +1066,15 @@ function ProductSection() {
                   </a>
                   <a
                     className="text-link"
-                    href="#quote"
+                    href={getProductUrl(product.handle)}
                     onClick={() =>
-                      trackEvent("quote_start", {
+                      trackEvent("product_click", {
                         location: "product_details_link",
                         product_id: product.id,
                       })
                     }
                   >
-                    Ask about it
+                    Details
                   </a>
                 </div>
               </div>
@@ -1740,7 +1740,7 @@ function MobileActionBar() {
 }
 
 export default function App() {
-  const currentProduct = null;
+  const currentProduct = getCurrentProduct();
   const isProductPath = isProductRoute();
 
   useEffect(() => {
@@ -1771,12 +1771,6 @@ export default function App() {
   }, [currentProduct]);
 
   useEffect(() => {
-    if (isProductPath) {
-      window.history.replaceState(null, "", "/");
-    }
-  }, [isProductPath]);
-
-  useEffect(() => {
     const scrollToCurrentHash = () => {
       const targetId = window.location.hash.slice(1);
       if (!targetId) return;
@@ -1791,7 +1785,7 @@ export default function App() {
     window.addEventListener("hashchange", scrollToCurrentHash);
 
     return () => window.removeEventListener("hashchange", scrollToCurrentHash);
-  }, []);
+  }, [currentProduct?.id, isProductPath]);
 
   return (
     <>
@@ -1800,16 +1794,31 @@ export default function App() {
       </a>
       <Header />
       <main id="main">
-        <Hero />
-        <HeroTrustSlider />
-        <LiftFinder />
-        <ShopBanner />
-        <ProductSection />
-        <QuoteSystem />
-        <QuoteProcessBanner />
-        <Process />
-        <Questions />
-        <FinalCta />
+        {isProductPath ? (
+          currentProduct ? (
+            <>
+              <ProductPage product={currentProduct} />
+              <QuoteSystem productInterest={currentProduct} />
+              <Questions />
+              <FinalCta />
+            </>
+          ) : (
+            <ProductNotFound />
+          )
+        ) : (
+          <>
+            <Hero />
+            <HeroTrustSlider />
+            <LiftFinder />
+            <ShopBanner />
+            <ProductSection />
+            <QuoteSystem />
+            <QuoteProcessBanner />
+            <Process />
+            <Questions />
+            <FinalCta />
+          </>
+        )}
       </main>
       <Footer />
       <MobileActionBar />
