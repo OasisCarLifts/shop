@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const fallbackToEmail = "support@oasiscarlifts.com";
+const fallbackToEmail = "info@oasiscarlifts.com";
 const fallbackFromEmail = "Oasis Car Lifts <quotes@oasiscarlifts.com>";
 
 function clean(value) {
