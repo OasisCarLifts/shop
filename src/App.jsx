@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-const phone = "(949) 310-3540";
-const phoneHref = "tel:+19493103540";
+const phone = "1 (888) 822-2976";
+const phoneHref = "tel:+18888222976";
 const contactEmail = "support@oasiscarlifts.com";
 const shopUrl = "https://oasiscarlifts.com/collections/all";
-const businessLegalName = "Sam's Supplies LLC (DBA Oasis Car Lifts)";
 const businessAddress = {
   street: "1333 N Manzanita St #1385L",
   cityStateZip: "Orange, CA 92867",
@@ -178,7 +177,7 @@ const faqs = [
   },
   {
     q: "Where is Oasis Car Lifts located?",
-    a: `Oasis Car Lifts is operated by ${businessLegalName}. The business address is ${businessAddress.street}, ${businessAddress.cityStateZip}. ${businessAddress.mailing}.`,
+    a: `Oasis Car Lifts is located at ${businessAddress.street}, ${businessAddress.cityStateZip}. ${businessAddress.mailing}.`,
   },
 ];
 
@@ -904,15 +903,15 @@ function LiftFinder() {
           <div className="card-actions">
             <a
               className="button"
-              href={getProductUrl(recommended.handle)}
+              href="#quote"
               onClick={() =>
-                trackEvent("product_click", {
+                trackEvent("quote_start", {
                   location: "finder_recommendation",
                   product_id: recommended.id,
                 })
               }
             >
-              View product
+              Get quote
             </a>
             <a
               className="text-link"
@@ -1022,9 +1021,9 @@ function ProductSection() {
           <article className="product-card" data-product={product.id} key={product.id}>
             <a
               className="product-image"
-              href={getProductUrl(product.handle)}
+              href="#quote"
               onClick={() =>
-                trackEvent("product_click", {
+                trackEvent("quote_start", {
                   location: "product_image",
                   product_id: product.id,
                 })
@@ -1067,15 +1066,15 @@ function ProductSection() {
                   </a>
                   <a
                     className="text-link"
-                    href={getProductUrl(product.handle)}
+                    href="#quote"
                     onClick={() =>
-                      trackEvent("product_click", {
+                      trackEvent("quote_start", {
                         location: "product_details_link",
                         product_id: product.id,
                       })
                     }
                   >
-                    Details
+                    Ask about it
                   </a>
                 </div>
               </div>
@@ -1655,10 +1654,6 @@ function Footer() {
         <a className="footer-logo" href={getSectionHref("top")} aria-label="Oasis Car Lifts home">
           <img src="/assets/oasis-logo-white.png" alt="Oasis Car Lifts" />
         </a>
-        <p>
-          Premium 2-post and 4-post lifts for home garages, enthusiasts, and small
-          shops. Built heavy. Backed for life.
-        </p>
         <div className="footer-contact">
           <div>
             <span>Address</span>
@@ -1745,7 +1740,7 @@ function MobileActionBar() {
 }
 
 export default function App() {
-  const currentProduct = getCurrentProduct();
+  const currentProduct = null;
   const isProductPath = isProductRoute();
 
   useEffect(() => {
@@ -1776,6 +1771,12 @@ export default function App() {
   }, [currentProduct]);
 
   useEffect(() => {
+    if (isProductPath) {
+      window.history.replaceState(null, "", "/");
+    }
+  }, [isProductPath]);
+
+  useEffect(() => {
     const scrollToCurrentHash = () => {
       const targetId = window.location.hash.slice(1);
       if (!targetId) return;
@@ -1790,7 +1791,7 @@ export default function App() {
     window.addEventListener("hashchange", scrollToCurrentHash);
 
     return () => window.removeEventListener("hashchange", scrollToCurrentHash);
-  }, [currentProduct?.id, isProductPath]);
+  }, []);
 
   return (
     <>
@@ -1799,31 +1800,16 @@ export default function App() {
       </a>
       <Header />
       <main id="main">
-        {isProductPath ? (
-          currentProduct ? (
-            <>
-              <ProductPage product={currentProduct} />
-              <QuoteSystem productInterest={currentProduct} />
-              <Questions />
-              <FinalCta />
-            </>
-          ) : (
-            <ProductNotFound />
-          )
-        ) : (
-          <>
-            <Hero />
-            <HeroTrustSlider />
-            <LiftFinder />
-            <ShopBanner />
-            <ProductSection />
-            <QuoteSystem />
-            <QuoteProcessBanner />
-            <Process />
-            <Questions />
-            <FinalCta />
-          </>
-        )}
+        <Hero />
+        <HeroTrustSlider />
+        <LiftFinder />
+        <ShopBanner />
+        <ProductSection />
+        <QuoteSystem />
+        <QuoteProcessBanner />
+        <Process />
+        <Questions />
+        <FinalCta />
       </main>
       <Footer />
       <MobileActionBar />
