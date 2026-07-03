@@ -3,34 +3,30 @@ import React, { useEffect, useMemo, useState } from "react";
 const phone = "1 (888) 822-2976";
 const phoneHref = "tel:+18888222976";
 const contactEmail = "support@oasiscarlifts.com";
-const shopUrl = "https://oasiscarlifts.com/collections/all";
+const shopUrl = "/#lifts";
 const businessAddress = {
   street: "1333 N Manzanita St #1385L",
   cityStateZip: "Orange, CA 92867",
   mailing: "Mailing: PO Box 1569, Garden Grove, CA 92842",
 };
 const footerShopLinks = [
-  ["About Us", "https://oasiscarlifts.com/pages/about-us", "footer_about_shop"],
-  ["Contact Us", "https://oasiscarlifts.com/pages/contact", "footer_contact_shop"],
-  ["Blogs", "https://oasiscarlifts.com/blogs/news", "footer_blogs_shop"],
-  ["Track Order", "https://oasiscarlifts.com/pages/track-order", "footer_track_shop"],
-  ["FAQs", "#faq", "footer_faqs_shop"],
-  ["Orders", "https://oasiscarlifts.com/account", "footer_orders_shop"],
+  ["All lifts", "/#lifts", "footer_all_lifts"],
+  ["Lift finder", "/#finder", "footer_lift_finder"],
+  ["Get quote", "/#quote", "footer_quote_shop"],
+  ["FAQs", "/#faq", "footer_faqs_shop"],
 ];
 const footerResourceLinks = [
-  ["Home", "#top", "footer_home"],
+  ["Home", "/#top", "footer_home"],
   ["Shop", shopUrl, "footer_shop"],
-  ["Accessories", "https://oasiscarlifts.com/collections/accessories", "footer_accessories"],
-  ["2 Post Lifts", "https://oasiscarlifts.com/collections/2-post-lifts", "footer_2_post_lifts"],
-  ["4 Post Lifts", "https://oasiscarlifts.com/collections/4-post-lifts", "footer_4_post_lifts"],
+  ["Garage fit check", "/#finder", "footer_garage_fit_check"],
+  ["Install help", "/#install", "footer_install_help"],
+  ["Buyer questions", "/#faq", "footer_buyer_questions"],
 ];
 const footerSupportLinks = [
-  ["About Us", "https://oasiscarlifts.com/pages/about-us", "footer_about_support"],
-  ["Contact Us", "https://oasiscarlifts.com/pages/contact", "footer_contact_support"],
-  ["Blogs", "https://oasiscarlifts.com/blogs/news", "footer_blogs_support"],
-  ["Track Order", "https://oasiscarlifts.com/pages/track-order", "footer_track_support"],
-  ["FAQs", "#faq", "footer_faqs_support"],
-  ["Orders", "https://oasiscarlifts.com/account", "footer_orders_support"],
+  ["Call Oasis", phoneHref, "footer_call_support"],
+  ["Email Oasis", `mailto:${contactEmail}`, "footer_email_support"],
+  ["Quote request", "/#quote", "footer_quote_support"],
+  ["FAQs", "/#faq", "footer_faqs_support"],
 ];
 
 const products = [

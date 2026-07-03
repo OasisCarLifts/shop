@@ -3,6 +3,26 @@
     {
       "source": "/products/:path*",
       "destination": "/index.html"
+    },
+    {
+      "source": "/collections/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pages/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/blogs/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/account/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/search",
+      "destination": "/index.html"
     }
   ]
 }
