@@ -7,7 +7,6 @@ const shopUrl = "/#lifts";
 const businessAddress = {
   street: "1333 N Manzanita St #1385L",
   cityStateZip: "Orange, CA 92867",
-  mailing: "Mailing: PO Box 1569, Garden Grove, CA 92842",
 };
 const footerShopLinks = [
   ["All lifts", "/#lifts", "footer_all_lifts"],
@@ -173,7 +172,7 @@ const faqs = [
   },
   {
     q: "Where is Oasis Car Lifts located?",
-    a: `Oasis Car Lifts is located at ${businessAddress.street}, ${businessAddress.cityStateZip}. ${businessAddress.mailing}.`,
+    a: `Oasis Car Lifts is located at ${businessAddress.street}, ${businessAddress.cityStateZip}.`,
   },
 ];
 
@@ -1655,7 +1654,6 @@ function Footer() {
             <span>Address</span>
             <strong>{businessAddress.street}</strong>
             <strong>{businessAddress.cityStateZip}</strong>
-            <small>{businessAddress.mailing}</small>
           </div>
           <div>
             <span>Phone</span>
