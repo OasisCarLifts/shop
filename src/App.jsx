@@ -1738,7 +1738,7 @@ export default function App() {
   const isProductPath = isProductRoute();
 
   useEffect(() => {
-    const baseUrl = "https://oasiscarlifts.com";
+    const baseUrl = "https://www.oasiscarlifts.com";
     const title = currentProduct
       ? `${currentProduct.name} | Oasis Car Lifts`
       : "Oasis Car Lifts | Garage car lifts, financing, and fit help";
