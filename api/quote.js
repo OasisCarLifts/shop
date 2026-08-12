@@ -66,6 +66,8 @@ function buildHtml({ name, phone, zip, notes, productInterest, sourceUrl }) {
 }
 
 export default async function handler(request, response) {
+  response.setHeader("Cache-Control", "no-store");
+
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
     return response.status(405).json({ error: "Method not allowed" });
@@ -75,12 +77,21 @@ export default async function handler(request, response) {
     return response.status(500).json({ error: "Resend is not configured" });
   }
 
-  const name = clean(request.body?.name);
-  const phone = clean(request.body?.phone);
-  const zip = clean(request.body?.zip);
-  const notes = clean(request.body?.notes);
-  const productInterest = request.body?.productInterest;
-  const sourceUrl = clean(request.body?.sourceUrl);
+  let body = request.body;
+  if (typeof body === "string") {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      return response.status(400).json({ error: "Invalid request data" });
+    }
+  }
+
+  const name = clean(body?.name);
+  const phone = clean(body?.phone);
+  const zip = clean(body?.zip);
+  const notes = clean(body?.notes);
+  const productInterest = body?.productInterest;
+  const sourceUrl = clean(body?.sourceUrl);
 
   if (!name || !phone || !zip) {
     return response.status(400).json({ error: "Name, phone, and ZIP code are required" });
@@ -105,8 +116,13 @@ export default async function handler(request, response) {
       return response.status(502).json({ error: error.message || "Unable to send quote request" });
     }
 
-    return response.status(200).json({ ok: true, id: data?.id });
+    return response.status(200).json({
+      ok: true,
+      id: data?.id,
+      message: "Quote request sent",
+    });
   } catch (error) {
+    console.error("Quote email failed", error);
     return response.status(500).json({ error: "Unable to send quote request" });
   }
 }

@@ -4,6 +4,7 @@ const phone = "1 (888) 822-2976";
 const phoneHref = "tel:+18888222976";
 const contactEmail = "support@oasiscarlifts.com";
 const shopUrl = "/#lifts";
+const campaignPath = "/google-car-lift-quote";
 const businessAddress = {
   street: "1333 N Manzanita St #1385L",
   cityStateZip: "Orange, CA 92867",
@@ -26,6 +27,237 @@ const footerSupportLinks = [
   ["Email Oasis", `mailto:${contactEmail}`, "footer_email_support"],
   ["Quote request", "/#quote", "footer_quote_support"],
   ["FAQs", "/#faq", "footer_faqs_support"],
+];
+const policyPages = {
+  "/privacy-policy": {
+    eyebrow: "Your information",
+    title: "Privacy policy",
+    description: "How Oasis Car Lifts collects, uses, and protects information submitted through this website.",
+    sections: [
+      {
+        title: "Information we collect",
+        paragraphs: [
+          "When you request a quote or contact Oasis Car Lifts, we collect the information you choose to provide, such as your full name, phone number, delivery ZIP code, notes, product interest, and the page where you submitted the request.",
+          "We also use Vercel Web Analytics to understand aggregate website activity. Vercel Web Analytics does not use cookies and reports anonymized information such as page views, referrers, general location, browser, operating system, and device type.",
+        ],
+      },
+      {
+        title: "How we use information",
+        bullets: [
+          "Respond to quote requests and customer questions.",
+          "Help confirm lift fit, freight, delivery, installation, and financing needs.",
+          "Operate, secure, troubleshoot, and improve the website.",
+          "Comply with legal obligations and prevent misuse or fraud.",
+        ],
+      },
+      {
+        title: "How information is shared",
+        paragraphs: [
+          "We share information only as reasonably necessary to operate the site and respond to you. Current service providers include Vercel for website hosting and anonymized analytics, and Resend for delivering quote-request emails. We may also share information when required by law, to protect rights or safety, or as part of a business transaction.",
+          "Oasis Car Lifts does not sell personal information and does not use quote-request information for cross-context behavioral advertising. Financing providers have their own privacy practices if you choose to apply through them.",
+        ],
+      },
+      {
+        title: "Retention and security",
+        paragraphs: [
+          "We retain personal information only as long as reasonably necessary for customer service, business records, dispute resolution, security, and legal obligations. We use reasonable administrative and technical safeguards, but no internet transmission or storage system can be guaranteed completely secure.",
+        ],
+      },
+      {
+        title: "Your privacy choices",
+        paragraphs: [
+          "California residents may have rights to request access to, correction of, or deletion of personal information, and to receive information about how it is used or disclosed. Where applicable, you may also have rights concerning sale or sharing and the use of sensitive personal information. Oasis Car Lifts does not discriminate against anyone for exercising an applicable privacy right.",
+          "To submit a request, email support@oasiscarlifts.com or call 1 (888) 822-2976. We may need to verify your identity before completing a request. An authorized agent may submit a request where permitted by law.",
+        ],
+      },
+      {
+        title: "Children's privacy",
+        paragraphs: [
+          "This website is intended for adults shopping for automotive equipment and is not directed to children under 13. We do not knowingly collect personal information from children under 13. Contact us if you believe a child has submitted information so we can review and delete it as appropriate.",
+        ],
+      },
+      {
+        title: "Policy changes",
+        paragraphs: [
+          "We may update this policy when our website, vendors, or legal obligations change. The current version and its effective date will always appear on this page.",
+        ],
+      },
+    ],
+  },
+  "/terms-of-use": {
+    eyebrow: "Website terms",
+    title: "Terms of use",
+    description: "The rules that apply when you use the Oasis Car Lifts website or request product information.",
+    sections: [
+      {
+        title: "Using this website",
+        paragraphs: [
+          "By using this website, you agree to these terms. If you do not agree, do not use the site. You must use the site lawfully and may not interfere with its operation, attempt unauthorized access, introduce malicious code, or misuse its content or forms.",
+        ],
+      },
+      {
+        title: "Quotes are not orders",
+        paragraphs: [
+          "Submitting a quote request does not create an order, reserve inventory, guarantee a price, or obligate either party to complete a transaction. A purchase is created only after Oasis Car Lifts confirms the product, price, payment, freight, delivery, and applicable order terms in writing.",
+        ],
+      },
+      {
+        title: "Product information and pricing",
+        paragraphs: [
+          "We work to keep product descriptions, images, specifications, pricing, promotions, and availability accurate. They may change without notice, and errors may occur. Written quotes and order confirmations control over website content. Monthly payment examples are estimates only; financing availability, rates, and terms are determined by third-party providers and are subject to approval.",
+        ],
+      },
+      {
+        title: "Fit, installation, and safe use",
+        paragraphs: [
+          "Website fit tools and recommendations are starting points, not engineering or installation approvals. Before ordering, the buyer must verify vehicle weight, ceiling and bay clearance, concrete and anchoring requirements, electrical requirements, permits, door travel, and delivery access.",
+          "Products must be installed, inspected, maintained, and operated according to the manufacturer's current instructions and applicable law. Use qualified professionals where required. Never exceed a lift's rated capacity or use equipment that is damaged or improperly installed.",
+        ],
+      },
+      {
+        title: "Warranties",
+        paragraphs: [
+          "Warranty coverage varies by product and manufacturer. Only the written warranty supplied with the product or confirmed in the order documents applies. Website summaries do not expand or replace those written terms.",
+        ],
+      },
+      {
+        title: "Intellectual property",
+        paragraphs: [
+          "The Oasis Car Lifts name, logos, website design, text, graphics, and original media are protected by applicable intellectual-property laws. You may view the site for personal or internal business purchasing purposes, but may not copy, republish, sell, or exploit site content without written permission.",
+        ],
+      },
+      {
+        title: "Disclaimers and limitation of liability",
+        paragraphs: [
+          "To the fullest extent permitted by law, the website is provided as available without warranties concerning uninterrupted operation or error-free content. Oasis Car Lifts is not liable for indirect, incidental, special, or consequential losses arising from website use. Nothing in these terms limits rights or remedies that cannot legally be waived.",
+        ],
+      },
+      {
+        title: "Governing law and changes",
+        paragraphs: [
+          "These terms are governed by California law, without regard to conflict-of-law rules. We may update them as the website and business change. Continued use after an update means the revised terms apply from their effective date.",
+        ],
+      },
+    ],
+  },
+  "/shipping-delivery": {
+    eyebrow: "Freight planning",
+    title: "Shipping and delivery",
+    description: "What buyers should expect when arranging freight delivery for automotive lift equipment.",
+    sections: [
+      {
+        title: "Shipping quotes",
+        paragraphs: [
+          "Automotive lifts are heavy freight. Shipping cost, carrier service, delivery method, and estimated timing depend on the product, destination, access, and current carrier availability. Any free-freight offer applies only to qualifying products and locations and must be confirmed in the written quote or order confirmation.",
+        ],
+      },
+      {
+        title: "Delivery access",
+        bullets: [
+          "Provide a complete, accurate delivery address and working contact number.",
+          "Tell Oasis before ordering about residential access, narrow roads, gates, restricted hours, or other site limitations.",
+          "Confirm whether a forklift, loading dock, liftgate, terminal pickup, or other unloading equipment is required.",
+          "The customer is responsible for safe unloading and moving the equipment after delivery unless the written order says otherwise.",
+        ],
+      },
+      {
+        title: "Timing and appointments",
+        paragraphs: [
+          "Shipping and delivery dates are estimates, not guarantees. Weather, carrier capacity, inspection holds, remote locations, and other events outside our control may cause delays. Do not schedule installers or contractors until the equipment has arrived and has been inspected.",
+        ],
+      },
+      {
+        title: "Inspect before signing",
+        paragraphs: [
+          "Inspect the shipment and packaging before signing the carrier receipt. Note visible damage, shortages, or opened packaging on the delivery receipt and take clear photographs. Contact Oasis Car Lifts promptly so we can help document a freight claim. Signing without noting visible damage may limit available carrier remedies.",
+        ],
+      },
+      {
+        title: "Address changes and failed delivery",
+        paragraphs: [
+          "Contact Oasis immediately if delivery details change. Carrier reconsignment, redelivery, storage, limited-access, liftgate, or appointment fees may apply when they are caused by incorrect information, missed delivery, or services not included in the original quote.",
+        ],
+      },
+    ],
+  },
+  "/returns-cancellations": {
+    eyebrow: "Order changes",
+    title: "Returns and cancellations",
+    description: "How to request an order change, cancellation, or return before sending equipment back.",
+    sections: [
+      {
+        title: "Written order terms control",
+        paragraphs: [
+          "Lift models, freight arrangements, and manufacturer requirements vary. The return and cancellation terms shown on your written quote, invoice, or order confirmation control for that purchase. Review them before payment and ask Oasis Car Lifts about anything that is unclear.",
+        ],
+      },
+      {
+        title: "Cancellations",
+        paragraphs: [
+          "Request a cancellation as soon as possible by calling 1 (888) 822-2976 and emailing support@oasiscarlifts.com. An order is not cancelled until Oasis confirms it in writing. Orders that have entered processing, shipped, or incurred manufacturer or carrier charges may not be cancellable or may be subject to costs disclosed in the order terms.",
+        ],
+      },
+      {
+        title: "Return authorization required",
+        paragraphs: [
+          "Do not ship equipment back without written return authorization and instructions from Oasis Car Lifts. Unauthorized returns may be refused. Return eligibility depends on the product, condition, packaging, order type, manufacturer rules, and written order terms.",
+        ],
+      },
+      {
+        title: "Items that may not be returnable",
+        bullets: [
+          "Installed, assembled, used, modified, damaged, or incomplete equipment.",
+          "Custom, special-order, clearance, final-sale, or discontinued items when identified in the order terms.",
+          "Items missing original packaging, parts, manuals, labels, or accessories.",
+          "Products returned after an applicable written return period or without authorization.",
+        ],
+      },
+      {
+        title: "Return freight and refunds",
+        paragraphs: [
+          "Return freight, original freight, restocking charges, inspection costs, and other deductions apply only as stated in the written order terms or return authorization. Approved refunds are issued after the returned product is received and inspected, using the original payment method where practical. Carrier damage and warranty claims follow separate procedures.",
+        ],
+      },
+      {
+        title: "Damaged or incorrect shipments",
+        paragraphs: [
+          "If equipment arrives visibly damaged, incomplete, or different from the written order, document it immediately and contact Oasis before installation or use. Keep all packaging and parts until the issue is resolved.",
+        ],
+      },
+    ],
+  },
+  "/accessibility": {
+    eyebrow: "Inclusive access",
+    title: "Accessibility statement",
+    description: "Oasis Car Lifts is working to make its website useful for visitors with different abilities and technologies.",
+    sections: [
+      {
+        title: "Our commitment",
+        paragraphs: [
+          "We aim to provide a website that supports keyboard navigation, readable contrast, meaningful page structure, descriptive image text, and responsive layouts. Accessibility is an ongoing effort as products, content, and technology change.",
+        ],
+      },
+      {
+        title: "Need help using the site?",
+        paragraphs: [
+          "If a page, form, document, or feature is difficult to use, call 1 (888) 822-2976 or email support@oasiscarlifts.com. Please describe the page and the assistance you need. We will work to provide the information or service through an accessible alternative.",
+        ],
+      },
+      {
+        title: "Feedback",
+        paragraphs: [
+          "We welcome specific accessibility feedback. Include the web address, the assistive technology or browser you were using if relevant, and a brief description of the problem so we can investigate it.",
+        ],
+      },
+    ],
+  },
+};
+const footerPolicyLinks = [
+  ["Privacy", "/privacy-policy"],
+  ["Terms", "/terms-of-use"],
+  ["Shipping", "/shipping-delivery"],
+  ["Returns", "/returns-cancellations"],
+  ["Accessibility", "/accessibility"],
 ];
 
 const products = [
@@ -65,8 +297,8 @@ const products = [
     id: "clear-floor-2post",
     name: "Clear-floor 2-post lift",
     shortName: "Clear-floor 2-post",
-    price: 2450,
-    monthly: 68,
+    price: 3699,
+    monthly: 103,
     capacity: "12,000 lb",
     bestFor: "Service work and heavy vehicles",
     detail: "Open floor access for serious maintenance work.",
@@ -81,8 +313,8 @@ const products = [
     id: "base-plate-2post",
     name: "Base-plate 2-post lift",
     shortName: "Base-plate 2-post",
-    price: 2250,
-    monthly: 62,
+    price: 2349,
+    monthly: 65,
     capacity: "10,000 lb",
     bestFor: "Lower ceilings and repair bays",
     detail: "A practical 2-post option for garages that need lower overhead clearance.",
@@ -97,8 +329,8 @@ const products = [
     id: "triple-stacker",
     name: "Triple stacker 3-car lift",
     shortName: "Triple stacker",
-    price: 15650,
-    monthly: 434,
+    price: 15949,
+    monthly: 443,
     capacity: "8,000-9,000 lb",
     bestFor: "Vertical parking for collections",
     detail: "A space-saving system for stacking three vehicles in one bay.",
@@ -200,8 +432,29 @@ function isProductRoute() {
   return window.location.pathname.startsWith("/products/");
 }
 
+function isCampaignRoute() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.location.pathname === campaignPath || window.location.pathname === `${campaignPath}/`;
+}
+
+function getCurrentPolicy() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const path = window.location.pathname.replace(/\/$/, "") || "/";
+  return policyPages[path] ? { ...policyPages[path], path } : null;
+}
+
+function isPolicyRoute() {
+  return Boolean(getCurrentPolicy());
+}
+
 function getSectionHref(sectionId) {
-  return isProductRoute() ? `/#${sectionId}` : `#${sectionId}`;
+  return isProductRoute() || isCampaignRoute() || isPolicyRoute() ? `/#${sectionId}` : `#${sectionId}`;
 }
 
 function getCurrentProduct() {
@@ -691,6 +944,347 @@ function HeroTrustSlider() {
         </div>
       </div>
     </section>
+  );
+}
+
+function CampaignQuoteCard() {
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    zip: "",
+    notes: "",
+  });
+  const [quoteStatus, setQuoteStatus] = useState("");
+  const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
+
+  const campaignQuoteInterest = useMemo(
+    () => ({
+      id: "google-campaign",
+      name: "Google campaign quote request",
+    }),
+    [],
+  );
+  const quoteMessage = useMemo(
+    () => buildQuoteMessage(form, campaignQuoteInterest),
+    [campaignQuoteInterest, form],
+  );
+
+  function updateForm(event) {
+    const { name, value } = event.target;
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  }
+
+  async function handleQuoteSubmit(event) {
+    event.preventDefault();
+
+    if (isSubmittingQuote) {
+      return;
+    }
+
+    trackEvent("quote_request_submit", {
+      has_notes: Boolean(form.notes.trim()),
+      product_id: "google_campaign",
+      zip_provided: Boolean(form.zip.trim()),
+    });
+
+    setIsSubmittingQuote(true);
+    setQuoteStatus("Sending your quote request...");
+
+    try {
+      const response = await fetch("/api/quote", {
+        body: JSON.stringify({
+          ...form,
+          productInterest: campaignQuoteInterest,
+          sourceUrl: window.location.href,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to send quote request");
+      }
+
+      trackEvent("quote_request_sent", {
+        product_id: "google_campaign",
+      });
+      setQuoteStatus(
+        result.id
+          ? `Quote request sent. Reference ${result.id.slice(0, 8)}. Oasis will call back soon.`
+          : "Quote request sent. Oasis will call back soon.",
+      );
+    } catch (error) {
+      trackEvent("quote_request_error", {
+        product_id: "google_campaign",
+      });
+      setQuoteStatus("The quote request did not send. Please call Oasis or copy the details.");
+    } finally {
+      setIsSubmittingQuote(false);
+    }
+  }
+
+  async function handleCopyQuote() {
+    if (!navigator.clipboard) {
+      setQuoteStatus("Copy is not available in this browser. Use the call button.");
+      return;
+    }
+
+    await navigator.clipboard.writeText(quoteMessage);
+    trackEvent("quote_details_copy", { location: "google_campaign_quote" });
+    setQuoteStatus("Quote details copied.");
+  }
+
+  return (
+    <form className="campaign-quote-card" id="quote" onSubmit={handleQuoteSubmit}>
+      <div className="campaign-quote-top">
+        <span>Start here</span>
+        <strong>Fast quote request</strong>
+      </div>
+      <div className="campaign-field-grid">
+        <label>
+          <span>Full name</span>
+          <input
+            autoComplete="name"
+            name="name"
+            onChange={updateForm}
+            placeholder="Full name"
+            required
+            type="text"
+            value={form.name}
+          />
+        </label>
+        <label>
+          <span>Phone number</span>
+          <input
+            autoComplete="tel"
+            name="phone"
+            onChange={updateForm}
+            placeholder="Best phone number"
+            required
+            type="tel"
+            value={form.phone}
+          />
+        </label>
+        <label>
+          <span>ZIP code</span>
+          <input
+            autoComplete="postal-code"
+            inputMode="numeric"
+            name="zip"
+            onChange={updateForm}
+            placeholder="Delivery ZIP"
+            required
+            type="text"
+            value={form.zip}
+          />
+        </label>
+      </div>
+      <label className="campaign-notes">
+        <span>Notes</span>
+        <textarea
+          name="notes"
+          onChange={updateForm}
+          placeholder="What are you lifting? Home garage or shop? Need financing, freight, or install help?"
+          rows={4}
+          value={form.notes}
+        />
+      </label>
+      <div className="campaign-quote-actions">
+        <button className="button" disabled={isSubmittingQuote} type="submit">
+          {isSubmittingQuote ? "Sending..." : "Get my quote"}
+        </button>
+        <button className="button button-secondary" onClick={handleCopyQuote} type="button">
+          Copy details
+        </button>
+      </div>
+      <a
+        className="campaign-phone-link"
+        href={phoneHref}
+        onClick={() => trackEvent("phone_click", { location: "google_campaign_quote" })}
+      >
+        Prefer to talk? Call {phone}
+      </a>
+      <p className="form-privacy-note">
+        By submitting, you agree that Oasis may contact you about this request. See our{" "}
+        <a href="/privacy-policy">privacy policy</a>.
+      </p>
+      {quoteStatus ? <p className="campaign-quote-status">{quoteStatus}</p> : null}
+    </form>
+  );
+}
+
+function CampaignLandingPage() {
+  const campaignProducts = products.filter((product) =>
+    ["base-plate-2post", "narrow-4post", "clear-floor-2post"].includes(product.id),
+  );
+
+  return (
+    <div className="campaign-page" id="top">
+      <section className="campaign-hero" aria-labelledby="campaign-title">
+        <div className="campaign-hero-media" aria-hidden="true">
+          <img src="/assets/quote-to-process-banner.png" alt="" />
+        </div>
+        <div className="campaign-hero-copy">
+          <div className="campaign-hero-kicker">
+            <span className="campaign-eyebrow">Oasis lift concierge</span>
+            <span className="campaign-availability">Real expert guidance</span>
+          </div>
+          <h1 id="campaign-title">
+            <span>Your garage.</span>
+            <span>The right lift.</span>
+            <span>One clear quote.</span>
+          </h1>
+          <p>
+            Tell us what you are lifting and where it is going. An Oasis specialist
+            will help confirm fit, freight, financing, and installation before you buy.
+          </p>
+          <div className="campaign-hero-actions">
+            <a
+              className="button"
+              href="#quote"
+              onClick={() => trackEvent("quote_start", { location: "google_campaign_hero" })}
+            >
+              Start quote
+            </a>
+            <a
+              className="button button-secondary"
+              href={phoneHref}
+              onClick={() => trackEvent("phone_click", { location: "google_campaign_hero" })}
+            >
+              Call Oasis
+            </a>
+          </div>
+          <p className="campaign-response-note">
+            <span aria-hidden="true" /> No pressure. No guesswork. Just a practical starting point.
+          </p>
+          <div className="campaign-proof-grid" aria-label="Why buyers request a quote">
+            <article>
+              <Icon name="finance" />
+              <div>
+                <strong>Flexible financing</strong>
+                <span>Explore monthly payment options.</span>
+              </div>
+            </article>
+            <article>
+              <Icon name="truck" />
+              <div>
+                <strong>Freight planned</strong>
+                <span>Know the delivery details early.</span>
+              </div>
+            </article>
+            <article>
+              <Icon name="warranty" />
+              <div>
+                <strong>Garage fit check</strong>
+                <span>Confirm space and vehicle needs.</span>
+              </div>
+            </article>
+          </div>
+        </div>
+        <CampaignQuoteCard />
+      </section>
+
+      <section className="campaign-strip" aria-label="Oasis quote advantages">
+        <article>
+          <Icon name="call" />
+          <span>Real phone support</span>
+        </article>
+        <article>
+          <Icon name="finance" />
+          <span>Affirm, Klarna, and Shop Pay options</span>
+        </article>
+        <article>
+          <Icon name="wrench" />
+          <span>Install planning before checkout</span>
+        </article>
+        <article>
+          <Icon name="truck" />
+          <span>Freight options available</span>
+        </article>
+      </section>
+
+      <section className="campaign-testimonial" aria-labelledby="campaign-testimonial-title">
+        <div className="campaign-testimonial-copy">
+          <span className="campaign-eyebrow">Customer testimonial</span>
+          <h2 id="campaign-testimonial-title">A real garage. A real lift decision.</h2>
+          <p>
+            Hear directly from an Oasis customer, then send us your garage details.
+            We will help you compare fit, freight, financing, and installation before
+            you commit.
+          </p>
+          <div className="campaign-testimonial-points" aria-label="Oasis customer support">
+            <span><Icon name="warranty" /> Fit guidance before ordering</span>
+            <span><Icon name="call" /> A real person to call</span>
+            <span><Icon name="truck" /> Freight and install planning</span>
+          </div>
+          <a
+            className="campaign-text-link"
+            href="#quote"
+            onClick={() => trackEvent("quote_start", { location: "google_campaign_testimonial" })}
+          >
+            Start my quote <span aria-hidden="true">&#8594;</span>
+          </a>
+        </div>
+        <div className="campaign-testimonial-video">
+          <div className="campaign-video-label">
+            <span>Customer story</span>
+            <strong>00:22</strong>
+          </div>
+          <video
+            aria-label="Oasis Car Lifts customer testimonial"
+            controls
+            onPlay={() => trackEvent("testimonial_play", { location: "google_campaign" })}
+            playsInline
+            poster="/assets/customer-testimonial-poster.jpg"
+            preload="metadata"
+          >
+            <source src="/assets/customer-testimonial.mp4" type="video/mp4" />
+            Your browser does not support this testimonial video.
+          </video>
+        </div>
+      </section>
+
+      <section className="campaign-product-section" aria-labelledby="campaign-products-title">
+        <div>
+          <span className="campaign-eyebrow">Popular starting points</span>
+          <h2 id="campaign-products-title">Quote the lift that fits your garage.</h2>
+        </div>
+        <div className="campaign-product-grid">
+          {campaignProducts.map((product) => (
+            <article className="campaign-product-card" key={product.id}>
+              <img src={product.image} alt={product.name} />
+              <div>
+                <span>{product.capacity} capacity</span>
+                <h3>{product.name}</h3>
+                <p>{product.bestFor}</p>
+                <strong>{formatCurrency(product.price)}</strong>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="campaign-bottom-cta">
+        <div>
+          <span className="campaign-eyebrow">Ready for the next step?</span>
+          <h2>Send the quote request and Oasis will call back.</h2>
+        </div>
+        <a
+          className="button"
+          href="#quote"
+          onClick={() => trackEvent("quote_start", { location: "google_campaign_bottom" })}
+        >
+          Get my quote
+        </a>
+      </section>
+    </div>
   );
 }
 
@@ -1383,7 +1977,11 @@ function QuoteSystem({ productInterest = null }) {
       trackEvent("quote_request_sent", {
         product_id: productInterest?.id ?? "general",
       });
-      setQuoteStatus("Quote request sent. Oasis will call back soon.");
+      setQuoteStatus(
+        result.id
+          ? `Quote request sent. Reference ${result.id.slice(0, 8)}. Oasis will call back soon.`
+          : "Quote request sent. Oasis will call back soon.",
+      );
     } catch (error) {
       trackEvent("quote_request_error", {
         product_id: productInterest?.id ?? "general",
@@ -1490,6 +2088,10 @@ function QuoteSystem({ productInterest = null }) {
                 Call {phone}
               </a>
             </div>
+            <p className="form-privacy-note">
+              By submitting, you agree that Oasis may contact you about this request. See our{" "}
+              <a href="/privacy-policy">privacy policy</a>.
+            </p>
             {quoteStatus ? <p className="quote-status">{quoteStatus}</p> : null}
           </form>
 
@@ -1642,6 +2244,63 @@ function FinalCta() {
   );
 }
 
+function PolicyPage({ policy }) {
+  return (
+    <article className="policy-page" id="top">
+      <header className="policy-hero">
+        <div>
+          <span>{policy.eyebrow}</span>
+          <h1>{policy.title}</h1>
+          <p>{policy.description}</p>
+        </div>
+        <div className="policy-effective">
+          <span>Effective</span>
+          <strong>August 10, 2026</strong>
+          <a href={`mailto:${contactEmail}`}>Questions about this policy</a>
+        </div>
+      </header>
+      <div className="policy-layout">
+        <aside className="policy-nav" aria-label={`${policy.title} sections`}>
+          <span>On this page</span>
+          {policy.sections.map((section, index) => (
+            <a href={`#policy-${index + 1}`} key={section.title}>
+              <b>{String(index + 1).padStart(2, "0")}</b>
+              {section.title}
+            </a>
+          ))}
+        </aside>
+        <div className="policy-content">
+          {policy.sections.map((section, index) => (
+            <section id={`policy-${index + 1}`} key={section.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h2>{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {section.bullets ? (
+                <ul>
+                  {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+                </ul>
+              ) : null}
+            </section>
+          ))}
+          <section className="policy-contact" aria-label="Oasis Car Lifts policy contact">
+            <span>Contact</span>
+            <h2>Questions or requests</h2>
+            <p>
+              Oasis Car Lifts<br />
+              {businessAddress.street}<br />
+              {businessAddress.cityStateZip}
+            </p>
+            <div>
+              <a href={phoneHref}>{phone}</a>
+              <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function Footer() {
   return (
     <footer className="site-footer">
@@ -1710,6 +2369,14 @@ function Footer() {
           ))}
         </nav>
       </div>
+      <div className="footer-legal">
+        <p>© {new Date().getFullYear()} Oasis Car Lifts. All rights reserved.</p>
+        <nav aria-label="Legal footer navigation">
+          {footerPolicyLinks.map(([label, href]) => (
+            <a href={href} key={label}>{label}</a>
+          ))}
+        </nav>
+      </div>
     </footer>
   );
 }
@@ -1721,7 +2388,7 @@ function MobileActionBar() {
         <Icon name="tag" />
         <span>Shop</span>
       </a>
-      <a href="#quote" onClick={() => trackEvent("quote_start", { location: "mobile_action_bar" })}>
+      <a href={getSectionHref("quote")} onClick={() => trackEvent("quote_start", { location: "mobile_action_bar" })}>
         <Icon name="finance" />
         <span>Quote</span>
       </a>
@@ -1735,22 +2402,39 @@ function MobileActionBar() {
 
 export default function App() {
   const currentProduct = getCurrentProduct();
+  const currentPolicy = getCurrentPolicy();
   const isProductPath = isProductRoute();
+  const isCampaignPath = isCampaignRoute();
 
   useEffect(() => {
     const baseUrl = "https://www.oasiscarlifts.com";
-    const title = currentProduct
-      ? `${currentProduct.name} | Oasis Car Lifts`
-      : "Oasis Car Lifts | Garage car lifts, financing, and fit help";
-    const description = currentProduct
-      ? `${currentProduct.name} for ${currentProduct.bestFor.toLowerCase()}. Confirm garage fit, freight, financing, and quote details with Oasis Car Lifts.`
-      : "Shop Oasis Car Lifts for 2-post and 4-post garage car lifts with fit guidance, freight help, warranty coverage, financing options, and expert phone support.";
-    const canonical = currentProduct
-      ? `${baseUrl}${getProductUrl(currentProduct.handle)}`
-      : `${baseUrl}/`;
-    const image = currentProduct
-      ? `${baseUrl}${currentProduct.image}`
-      : `${baseUrl}/assets/oasis-hero-background-wide.jpg`;
+    let title = "Oasis Car Lifts | Garage car lifts, financing, and fit help";
+    let description =
+      "Shop Oasis Car Lifts for 2-post and 4-post garage car lifts with fit guidance, freight help, warranty coverage, financing options, and expert phone support.";
+    let canonical = `${baseUrl}/`;
+    let image = `${baseUrl}/assets/oasis-hero-background-wide.jpg`;
+
+    if (isCampaignPath) {
+      title = "Get a Garage Car Lift Quote | Oasis Car Lifts";
+      description =
+        "Request a fast Oasis Car Lifts quote for 2-post and 4-post garage lifts. Confirm fit, freight, financing, and install details with real phone support.";
+      canonical = `${baseUrl}${campaignPath}`;
+      image = `${baseUrl}/assets/quote-to-process-banner.png`;
+    }
+
+    if (currentProduct) {
+      title = `${currentProduct.name} | Oasis Car Lifts`;
+      description = `${currentProduct.name} for ${currentProduct.bestFor.toLowerCase()}. Confirm garage fit, freight, financing, and quote details with Oasis Car Lifts.`;
+      canonical = `${baseUrl}${getProductUrl(currentProduct.handle)}`;
+      image = `${baseUrl}${currentProduct.image}`;
+    }
+
+    if (currentPolicy) {
+      title = `${currentPolicy.title} | Oasis Car Lifts`;
+      description = currentPolicy.description;
+      canonical = `${baseUrl}${currentPolicy.path}`;
+      image = `${baseUrl}/assets/oasis-hero-background-wide.jpg`;
+    }
 
     document.title = title;
     setCanonical(canonical);
@@ -1762,7 +2446,7 @@ export default function App() {
     setMeta("twitter:title", title);
     setMeta("twitter:description", description);
     setMeta("twitter:image", image);
-  }, [currentProduct]);
+  }, [currentPolicy, currentProduct, isCampaignPath]);
 
   useEffect(() => {
     const scrollToCurrentHash = () => {
@@ -1779,7 +2463,7 @@ export default function App() {
     window.addEventListener("hashchange", scrollToCurrentHash);
 
     return () => window.removeEventListener("hashchange", scrollToCurrentHash);
-  }, [currentProduct?.id, isProductPath]);
+  }, [currentPolicy?.path, currentProduct?.id, isCampaignPath, isProductPath]);
 
   return (
     <>
@@ -1788,7 +2472,11 @@ export default function App() {
       </a>
       <Header />
       <main id="main">
-        {isProductPath ? (
+        {currentPolicy ? (
+          <PolicyPage policy={currentPolicy} />
+        ) : isCampaignPath ? (
+          <CampaignLandingPage />
+        ) : isProductPath ? (
           currentProduct ? (
             <>
               <ProductPage product={currentProduct} />
