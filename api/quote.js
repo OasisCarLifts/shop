@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const fallbackToEmail = "info@oasiscarlifts.com";
+const fallbackToEmail = "contact@oasiscarlifts.com";
 const fallbackFromEmail = "Oasis Car Lifts <quotes@oasiscarlifts.com>";
 
 function clean(value) {
@@ -98,7 +98,7 @@ export default async function handler(request, response) {
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const to = process.env.QUOTE_TO_EMAIL || fallbackToEmail;
+  const to = process.env.QUOTE_RECIPIENT_EMAIL || fallbackToEmail;
   const from = process.env.RESEND_FROM || fallbackFromEmail;
   const subject = `Quote request from ${name}`;
   const payload = { name, phone, zip, notes, productInterest, sourceUrl };
