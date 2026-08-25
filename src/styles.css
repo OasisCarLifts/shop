@@ -5474,6 +5474,11 @@ legend,
     overflow-x: hidden;
   }
 
+  #root {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   .top-bar {
     justify-content: center;
     min-height: 30px;
@@ -6127,5 +6132,350 @@ legend,
 
   .campaign-strip span {
     font-size: 0.72rem;
+  }
+}
+
+/* Authoritative mobile layout */
+@media (max-width: 700px) {
+  :root {
+    --mobile-gutter: 1rem;
+  }
+
+  body {
+    min-width: 0;
+    padding-bottom: calc(74px + env(safe-area-inset-bottom));
+  }
+
+  img,
+  video,
+  svg {
+    max-width: 100%;
+  }
+
+  .site-header {
+    gap: 0;
+    grid-template-columns: 1fr;
+    min-height: 64px;
+    padding: 0 var(--mobile-gutter);
+  }
+
+  .brand img {
+    height: 36px;
+  }
+
+  .hero {
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.74) 0%, rgba(0, 0, 0, 0.48) 45%, rgba(0, 0, 0, 0.86) 100%),
+      url("/assets/oasis-hero-background-v2.jpg") 58% center / cover no-repeat,
+      #050506;
+    height: auto;
+    min-height: 620px;
+    padding: 0 var(--mobile-gutter);
+  }
+
+  .hero-shell {
+    align-items: flex-end;
+    min-height: 620px;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    overflow: visible;
+    padding: 3.5rem 0 2.25rem;
+    width: 100%;
+  }
+
+  .hero-kicker {
+    font-size: 0.64rem;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.15rem, 10.2vw, 2.75rem);
+    line-height: 0.95;
+    max-width: 100%;
+    overflow-wrap: normal;
+  }
+
+  .hero-title-typing {
+    min-height: 1.9em;
+  }
+
+  .hero-rule {
+    margin-top: 1rem;
+  }
+
+  .hero p {
+    font-size: 0.94rem;
+    line-height: 1.5;
+    margin-top: 1rem;
+    max-width: 30ch;
+  }
+
+  .hero-actions {
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: 1fr;
+    margin-top: 1.2rem;
+  }
+
+  .hero .button {
+    min-height: 48px;
+    min-width: 0;
+    padding: 0 0.75rem;
+    width: 100%;
+    white-space: normal;
+  }
+
+  .hero-benefits {
+    display: none;
+  }
+
+  .hero-light-sweep,
+  .hero-red-beam {
+    display: none;
+  }
+
+  .hero-trust-slider {
+    padding: 0.85rem 0 1rem;
+  }
+
+  .section.job-finder {
+    padding: 3.75rem var(--mobile-gutter);
+  }
+
+  .section.job-finder::after {
+    display: none;
+  }
+
+  .job-finder-heading {
+    gap: 0.8rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .job-finder-heading h2 {
+    font-size: clamp(2.65rem, 14vw, 3.75rem);
+    line-height: 0.92;
+    max-width: 9ch;
+  }
+
+  .job-finder-heading p {
+    border-left-width: 1px;
+    font-size: 0.94rem;
+    line-height: 1.5;
+    padding-left: 0.9rem;
+  }
+
+  .job-card-grid {
+    gap: 0.9rem;
+  }
+
+  .job-card {
+    min-height: 390px;
+    padding: 1.1rem;
+  }
+
+  .job-card.is-revealed {
+    min-height: 0;
+  }
+
+  .job-card-visual {
+    height: 104px;
+    margin: 1rem 0 1.2rem;
+  }
+
+  .job-card-icon {
+    height: 58px;
+    width: 58px;
+  }
+
+  .job-card h3 {
+    font-size: 2.05rem;
+  }
+
+  .job-card-link {
+    margin: auto -1.1rem -1.1rem;
+    min-height: 54px;
+    padding: 0 1.1rem;
+    width: calc(100% + 2.2rem);
+  }
+
+  .job-product-view .job-recommendation-image {
+    aspect-ratio: 4 / 3;
+    margin: 1rem 0;
+  }
+
+  .product-grid,
+  .related-product-grid,
+  .campaign-product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-image,
+  .campaign-product-card img {
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+  }
+
+  .quote-layout {
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .quote-copy,
+  .quote-form,
+  .quote-summary {
+    min-height: 0;
+    padding: 1.15rem;
+  }
+
+  .quote-copy h2 {
+    font-size: clamp(2.35rem, 12vw, 3.05rem);
+    line-height: 0.94;
+    max-width: 9ch;
+  }
+
+  .quote-human-card {
+    align-items: flex-start;
+  }
+
+  .quote-form-grid,
+  .quote-actions,
+  .campaign-quote-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-form input,
+  .quote-form select,
+  .quote-form textarea,
+  .campaign-quote-card input,
+  .campaign-quote-card textarea {
+    font-size: 16px;
+  }
+
+  .campaign-hero {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 3rem var(--mobile-gutter);
+  }
+
+  .campaign-hero::before {
+    background: rgba(4, 4, 4, 0.7);
+  }
+
+  .campaign-hero::after {
+    background: linear-gradient(180deg, rgba(5, 5, 5, 0.34), rgba(5, 5, 5, 0.68));
+  }
+
+  .campaign-hero-copy {
+    max-width: 100%;
+  }
+
+  .campaign-hero h1 {
+    color: #fff;
+    font-size: clamp(2.05rem, 8.7vw, 2.4rem);
+    line-height: 0.94;
+    max-width: 100%;
+    overflow-wrap: normal;
+    text-shadow: 0 3px 24px rgba(0, 0, 0, 0.9);
+  }
+
+  .campaign-hero-copy > p {
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 34ch;
+  }
+
+  .campaign-hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-proof-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-quote-card {
+    border-radius: 6px;
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .shop-banner-section {
+    height: 240px;
+    margin-inline: 0;
+  }
+
+  .shop-banner-section img {
+    object-position: 64% center;
+  }
+
+  .final-cta,
+  .site-footer {
+    padding-left: var(--mobile-gutter);
+    padding-right: var(--mobile-gutter);
+  }
+
+  .footer-links {
+    gap: 1.75rem 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer nav {
+    min-width: 0;
+  }
+
+  .mobile-action-bar {
+    display: flex;
+    gap: 0;
+    max-width: 100vw;
+    min-height: 66px;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+  }
+
+  .mobile-action-bar a {
+    border-bottom: 0;
+    border-radius: 0;
+    border-top: 0;
+    flex: 1 1 0;
+    min-height: 66px;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0.4rem 0.2rem;
+    width: 33.333%;
+  }
+
+  .mobile-action-bar span {
+    font-size: 0.62rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero {
+    min-height: 590px;
+  }
+
+  .hero-shell {
+    min-height: 590px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.15rem, 11vw, 2.75rem);
+  }
+
+  .hero-kicker {
+    font-size: 0.59rem;
+  }
+
+  .hero-actions,
+  .campaign-hero-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-links {
+    grid-template-columns: 1fr;
   }
 }
