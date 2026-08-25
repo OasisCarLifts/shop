@@ -6318,6 +6318,76 @@ legend,
     object-fit: contain;
   }
 
+  .product-image {
+    background: #161616;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .product-image img {
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    padding: 0;
+    transform: none;
+    width: 100%;
+  }
+
+  .product-card:hover .product-image img {
+    transform: none;
+  }
+
+  .product-page-visual {
+    aspect-ratio: 1 / 1;
+    justify-self: start;
+    max-width: calc(100vw - (2 * var(--mobile-gutter)));
+    width: calc(100vw - (2 * var(--mobile-gutter)));
+  }
+
+  .product-page-hero {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 100%;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .product-page-copy {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .product-page h1 {
+    font-size: clamp(2.15rem, 10.5vw, 3rem);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .product-zoom-trigger {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .product-zoom-trigger img {
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transform: none;
+    width: 100%;
+  }
+
+  .product-zoom-trigger:hover img,
+  .product-zoom-trigger:focus-visible img {
+    transform: none;
+  }
+
+  .job-product-view .job-recommendation-image img,
+  .recommendation img,
+  .related-product-card img {
+    object-fit: contain;
+    object-position: center;
+  }
+
   .quote-layout {
     align-items: stretch;
     gap: 0.9rem;
