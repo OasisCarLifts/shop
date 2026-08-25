@@ -47,14 +47,6 @@ const products = [
       "Extra large 4-post garage car lift for full-size trucks, wide garage bays, storage, and collector vehicles.",
   },
   {
-    name: "Narrow 4-post lift",
-    handle: "oasis-narrow-4-post-car-lift-9000-lbs",
-    price: "3250",
-    image: "/assets/product-narrow-4post.png",
-    description:
-      "Narrow 4-post car lift for tighter home garages, storage bays, and space-saving vehicle parking.",
-  },
-  {
     name: "Clear-floor 2-post lift",
     handle: "oasis-lifts-clear-floor-2-post-car-lift-12-000-lbs-capacity",
     price: "3699",

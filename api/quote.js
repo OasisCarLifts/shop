@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const quoteRecipient = "24alkabbansammy@gmail.com";
+const quoteRecipient = "contact@oasiscarlifts.com";
 const fallbackFromEmail = "Oasis Car Lifts <quotes@oasiscarlifts.com>";
 
 function clean(value) {

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 const phone = "1 (888) 822-2976";
 const phoneHref = "tel:+18888222976";
-const contactEmail = "support@oasiscarlifts.com";
+const contactEmail = "contact@oasiscarlifts.com";
 const shopUrl = "/#lifts";
 const campaignPath = "/google-car-lift-quote";
 const businessAddress = {
@@ -67,7 +67,7 @@ const policyPages = {
         title: "Your privacy choices",
         paragraphs: [
           "California residents may have rights to request access to, correction of, or deletion of personal information, and to receive information about how it is used or disclosed. Where applicable, you may also have rights concerning sale or sharing and the use of sensitive personal information. Oasis Car Lifts does not discriminate against anyone for exercising an applicable privacy right.",
-          "To submit a request, email support@oasiscarlifts.com or call 1 (888) 822-2976. We may need to verify your identity before completing a request. An authorized agent may submit a request where permitted by law.",
+          "To submit a request, email contact@oasiscarlifts.com or call 1 (888) 822-2976. We may need to verify your identity before completing a request. An authorized agent may submit a request where permitted by law.",
         ],
       },
       {
@@ -194,7 +194,7 @@ const policyPages = {
       {
         title: "Cancellations",
         paragraphs: [
-          "Request a cancellation as soon as possible by calling 1 (888) 822-2976 and emailing support@oasiscarlifts.com. An order is not cancelled until Oasis confirms it in writing. Orders that have entered processing, shipped, or incurred manufacturer or carrier charges may not be cancellable or may be subject to costs disclosed in the order terms.",
+          "Request a cancellation as soon as possible by calling 1 (888) 822-2976 and emailing contact@oasiscarlifts.com. An order is not cancelled until Oasis confirms it in writing. Orders that have entered processing, shipped, or incurred manufacturer or carrier charges may not be cancellable or may be subject to costs disclosed in the order terms.",
         ],
       },
       {
@@ -240,7 +240,7 @@ const policyPages = {
       {
         title: "Need help using the site?",
         paragraphs: [
-          "If a page, form, document, or feature is difficult to use, call 1 (888) 822-2976 or email support@oasiscarlifts.com. Please describe the page and the assistance you need. We will work to provide the information or service through an accessible alternative.",
+          "If a page, form, document, or feature is difficult to use, call 1 (888) 822-2976 or email contact@oasiscarlifts.com. Please describe the page and the assistance you need. We will work to provide the information or service through an accessible alternative.",
         ],
       },
       {
@@ -275,22 +275,6 @@ const products = [
     minHeight: 9,
     maxWeight: 9000,
     minWidth: 11,
-    type: "4-post",
-  },
-  {
-    id: "narrow-4post",
-    name: "Narrow 4-post lift",
-    shortName: "Narrow 4-post",
-    price: 3250,
-    monthly: 90,
-    capacity: "9,000 lb",
-    bestFor: "Tighter garages and storage",
-    detail: "110V setup with casters and ramps included.",
-    image: "/assets/product-narrow-4post.png",
-    handle: "oasis-narrow-4-post-car-lift-9000-lbs",
-    minHeight: 8.5,
-    maxWeight: 9000,
-    minWidth: 9.5,
     type: "4-post",
   },
   {
@@ -533,7 +517,6 @@ function getRecommendation({ useCase, ceiling, weight, width }) {
 
     if (useCase === "parking") {
       score += product.type === "4-post" ? 52 : -20;
-      score += product.id === "narrow-4post" && width < 11 ? 26 : 0;
       score += product.id === "xl-4post" && width >= 11 ? 24 : 0;
     }
 
@@ -1122,7 +1105,7 @@ function CampaignQuoteCard() {
 
 function CampaignLandingPage() {
   const campaignProducts = products.filter((product) =>
-    ["base-plate-2post", "narrow-4post", "clear-floor-2post"].includes(product.id),
+    ["base-plate-2post", "clear-floor-2post", "xl-4post"].includes(product.id),
   );
 
   return (
@@ -1258,7 +1241,12 @@ function CampaignLandingPage() {
         </div>
         <div className="campaign-product-grid">
           {campaignProducts.map((product) => (
-            <article className="campaign-product-card" key={product.id}>
+            <a
+              className="campaign-product-card"
+              href={getProductUrl(product.handle)}
+              key={product.id}
+              onClick={() => trackEvent("product_click", { location: "google_campaign_products", product_id: product.id })}
+            >
               <img src={product.image} alt={product.name} />
               <div>
                 <span>{product.capacity} capacity</span>
@@ -1266,7 +1254,7 @@ function CampaignLandingPage() {
                 <p>{product.bestFor}</p>
                 <strong>{formatCurrency(product.price)}</strong>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </section>
@@ -1547,6 +1535,103 @@ function LiftFinder() {
   );
 }
 
+function JobFinder() {
+  const [openRecommendation, setOpenRecommendation] = useState(null);
+  const liftJobs = [
+    { icon: "warranty", title: "Store Two Cars", description: "Create a second parking space without expanding your garage.", category: "Parking & storage", product: "triple-stacker" },
+    { icon: "wrench", title: "Work Under My Car", description: "Get clear access for maintenance, repairs, and detailing.", category: "2-post service", product: "base-plate-2post" },
+    { icon: "truck", title: "Store & Service Vehicles", description: "Balance everyday parking with flexible service access.", category: "4-post versatility", product: "xl-4post" },
+    { icon: "building", title: "Equip My Auto Shop", description: "Build a dependable bay for frequent professional use.", category: "Commercial shop", product: "clear-floor-2post" },
+  ];
+
+  return (
+    <section className="section job-finder" id="finder" aria-labelledby="job-finder-title">
+      <header className="job-finder-heading">
+        <span>Start with your goal</span>
+        <h2 id="job-finder-title">What are you trying to do?</h2>
+        <p>Choose the job first. We will point you toward the lift category that fits it best.</p>
+      </header>
+      <div className="job-card-grid">
+        {liftJobs.map((job) => {
+          const recommendedLift = products.find((product) => product.id === job.product);
+          const isOpen = openRecommendation === job.product;
+
+          return (
+            <article className={`job-card${isOpen ? " is-revealed" : ""}`} key={job.title}>
+              {isOpen && recommendedLift ? (
+                <div className="job-product-view">
+                  <div className="job-product-label">
+                    <div>
+                      <span>Recommended match</span>
+                      <strong>{job.title}</strong>
+                    </div>
+                    <button className="job-card-back" type="button" onClick={() => setOpenRecommendation(null)}>
+                      <Icon name="arrowLeft" />
+                      <span>Back</span>
+                    </button>
+                  </div>
+                  <a
+                    className="job-recommendation-image"
+                    href={getProductUrl(recommendedLift.handle)}
+                    aria-label={`View ${recommendedLift.name} product page`}
+                    onClick={() => trackEvent("product_click", { location: "job_recommendation", product_id: recommendedLift.id })}
+                  >
+                    <img src={recommendedLift.image} alt={recommendedLift.name} />
+                  </a>
+                  <div className="job-product-details">
+                    <h3>{recommendedLift.name}</h3>
+                    <div className="job-product-meta">
+                      <span>
+                        <small>Capacity</small>
+                        <strong>{recommendedLift.capacity}</strong>
+                      </span>
+                      <span>
+                        <small>Starting at</small>
+                        <strong>{formatCurrency(recommendedLift.price)}</strong>
+                      </span>
+                    </div>
+                  </div>
+                  <a className="job-product-link" href={getProductUrl(recommendedLift.handle)}>
+                    View Product
+                    <Icon name="arrowRight" />
+                  </a>
+                </div>
+              ) : (
+                <>
+                  <div className="job-card-topline">
+                    <span>{job.category}</span>
+                    <span>Recommended by need</span>
+                  </div>
+                  <div className="job-card-visual" aria-hidden="true">
+                    <span className="job-card-icon"><Icon name={job.icon} /></span>
+                    <span className="job-card-visual-label">Find my fit</span>
+                  </div>
+                  <div className="job-card-copy">
+                    <h3>{job.title}</h3>
+                    <p>{job.description}</p>
+                  </div>
+                  <button
+                    className="job-card-link"
+                    type="button"
+                    aria-expanded="false"
+                    onClick={() => {
+                      setOpenRecommendation(job.product);
+                      trackEvent("lift_job_click", { job: job.title, product_id: job.product });
+                    }}
+                  >
+                    See Recommended Lift
+                    <Icon name="arrowRight" />
+                  </button>
+                </>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function RangeControl({ label, min, max, step, value, suffix, onChange }) {
   const formatRangeEndpoint = (number) => `${number.toLocaleString()} ${suffix}`;
   const progress = `${Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100))}%`;
@@ -1607,7 +1692,7 @@ function ProductSection() {
       </div>
       <div className="product-grid">
         {products.map((product) => (
-          <article className="product-card" data-product={product.id} key={product.id}>
+          <article className="product-card" data-product={product.id} id={product.id} key={product.id}>
             <a
               className="product-image"
               href={getProductUrl(product.handle)}
@@ -1678,7 +1763,7 @@ function ProductSection() {
 function ShopBanner() {
   return (
     <section className="shop-banner-section" aria-label="Oasis premium garage lift installations">
-      <img src="/assets/shop-lifts-garage-banner.png" alt="Luxury garage with Oasis car lifts installed" />
+      <img src="/assets/shop-lifts-garage-banner.png" alt="Luxury garage with a two-car Oasis parking lift" />
       <div className="shop-banner-copy">
         <span>Premium garage lift solutions</span>
         <h2>Built for serious garages</h2>
@@ -2491,7 +2576,7 @@ export default function App() {
           <>
             <Hero />
             <HeroTrustSlider />
-            <LiftFinder />
+            <JobFinder />
             <ShopBanner />
             <ProductSection />
             <QuoteSystem />
