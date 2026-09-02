@@ -1,4 +1,6 @@
 import { Resend } from "resend";
+import { randomBytes } from "node:crypto";
+import { getRedis } from "./_lib/redis.js";
 
 const quoteRecipient = "contact@oasiscarlifts.com";
 const fallbackFromEmail = "Oasis Car Lifts <quotes@oasiscarlifts.com>";
@@ -16,7 +18,8 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function buildPlainText({ name, phone, zip, notes, productInterest, sourceUrl }) {
+function buildPlainText(payload) {
+  const { name, phone, zip, notes, productInterest, sourceUrl } = payload;
   return [
     "New Oasis Car Lifts quote request",
     "",
@@ -24,6 +27,13 @@ function buildPlainText({ name, phone, zip, notes, productInterest, sourceUrl })
     `Name: ${name}`,
     `Phone: ${phone}`,
     `ZIP code: ${zip}`,
+    payload.email ? `Email: ${payload.email}` : null,
+    payload.address1 ? `Address: ${[payload.address1, payload.address2, payload.city, payload.state, zip].filter(Boolean).join(", ")}` : null,
+    payload.draftType ? `Request type: ${payload.draftType}` : null,
+    payload.quantity ? `Quantity: ${payload.quantity}` : null,
+    payload.addressType ? `Address type: ${payload.addressType}` : null,
+    payload.addressType ? `Forklift/loading dock: ${payload.hasDock ? "Yes" : "No"}` : null,
+    payload.installation !== undefined ? `Installation requested: ${payload.installation ? "Yes" : "No"}` : null,
     "",
     "Product interest",
     productInterest?.name || "General quote request",
@@ -33,14 +43,21 @@ function buildPlainText({ name, phone, zip, notes, productInterest, sourceUrl })
     "",
     "Source",
     sourceUrl || "Website quote form",
-  ].join("\n");
+  ].filter((line) => line !== null).join("\n");
 }
 
-function buildHtml({ name, phone, zip, notes, productInterest, sourceUrl }) {
+function buildHtml(payload) {
+  const { name, phone, zip, notes, productInterest, sourceUrl } = payload;
   const rows = [
     ["Name", name],
     ["Phone", phone],
     ["ZIP code", zip],
+    ...(payload.email ? [["Email", payload.email]] : []),
+    ...(payload.address1 ? [["Delivery address", [payload.address1, payload.address2, payload.city, payload.state, zip].filter(Boolean).join(", ")]] : []),
+    ...(payload.draftType ? [["Request type", "Delivered-price request"]] : []),
+    ...(payload.quantity ? [["Quantity", payload.quantity]] : []),
+    ...(payload.addressType ? [["Address type", payload.addressType], ["Forklift/loading dock", payload.hasDock ? "Yes" : "No"]] : []),
+    ...(payload.installation !== undefined ? [["Installation", payload.installation ? "Requested" : "Not requested"]] : []),
     ["Product interest", productInterest?.name || "General quote request"],
     ["Notes", notes || "None"],
     ["Source", sourceUrl || "Website quote form"],
@@ -92,15 +109,29 @@ export default async function handler(request, response) {
   const notes = clean(body?.notes);
   const productInterest = body?.productInterest;
   const sourceUrl = clean(body?.sourceUrl);
+  const email = clean(body?.email);
+  const address1 = clean(body?.address1);
+  const address2 = clean(body?.address2);
+  const city = clean(body?.city);
+  const state = clean(body?.state);
+  const draftType = body?.draftType === "delivered_price" ? "delivered_price" : "";
+  const quantity = Number(body?.quantity || 1);
+  const addressType = body?.addressType === "commercial" ? "commercial" : body?.addressType === "residential" ? "residential" : "";
+  const hasDock = body?.hasDock === true;
+  const installation = body?.installation === true;
 
   if (!name || !phone || !zip) {
     return response.status(400).json({ error: "Name, phone, and ZIP code are required" });
+  }
+  if (draftType && (!email || !address1 || !city || !state)) {
+    return response.status(400).json({ error: "Email and complete delivery address are required" });
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const from = process.env.RESEND_FROM || fallbackFromEmail;
   const subject = `Quote request from ${name}`;
-  const payload = { name, phone, zip, notes, productInterest, sourceUrl };
+  const reference = draftType ? `OCL-Q-${randomBytes(3).toString("hex").toUpperCase()}` : null;
+  const payload = { name, phone, zip, notes, productInterest, sourceUrl, email, address1, address2, city, state, draftType, quantity, addressType, hasDock, installation, reference };
 
   try {
     const { data, error } = await resend.emails.send({
@@ -115,9 +146,25 @@ export default async function handler(request, response) {
       return response.status(502).json({ error: error.message || "Unable to send quote request" });
     }
 
+    if (draftType) {
+      try {
+        await getRedis().set(`quote-draft:${reference}`, { ...payload, status: "New", createdDate: new Date().toISOString() }, { ex: 60 * 60 * 24 * 180 });
+      } catch (storageError) {
+        console.error("Quote draft storage failed", storageError?.message);
+      }
+
+      await resend.emails.send({
+        from,
+        to: email,
+        subject: `Oasis delivered-price request ${reference}`,
+        text: `We received your delivered-price request for ${productInterest?.name || "an Oasis lift"}. Reference: ${reference}. Oasis will contact you after reviewing freight, access, and installation details.`,
+      });
+    }
+
     return response.status(200).json({
       ok: true,
       id: data?.id,
+      reference,
       message: "Quote request sent",
     });
   } catch (error) {

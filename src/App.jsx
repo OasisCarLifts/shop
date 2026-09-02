@@ -351,7 +351,7 @@ const finderConfidence = [
 const shopBenefits = [
   ["finance", "Financing shown", "Monthly estimates on each lift"],
   ["truck", "Freight guidance", "Know delivery details before checkout"],
-  ["call", "Quote-first support", "Confirm fit with a real person"],
+  ["warranty", "Secure checkout", "Buy online or request expert help"],
 ];
 
 const process = [
@@ -408,6 +408,26 @@ function getMonthlyPayment(product) {
   return product.monthly ?? Math.floor(product.price / 36);
 }
 
+const cartStorageKey = "oasis-cart-v1";
+
+function readCart() {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(cartStorageKey) || "[]");
+    return Array.isArray(stored)
+      ? stored
+          .filter((item) => getServerCartProduct(item.id) && Number.isInteger(item.quantity) && item.quantity > 0)
+          .map((item) => ({ product: getServerCartProduct(item.id), quantity: Math.min(4, item.quantity) }))
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function getServerCartProduct(productId) {
+  return products.find((product) => product.id === productId) ?? null;
+}
+
 function isProductRoute() {
   if (typeof window === "undefined") {
     return false;
@@ -422,6 +442,11 @@ function isCampaignRoute() {
   }
 
   return window.location.pathname === campaignPath || window.location.pathname === `${campaignPath}/`;
+}
+
+function isOrderSuccessRoute() {
+  if (typeof window === "undefined") return false;
+  return window.location.pathname === "/order-success" || window.location.pathname === "/order-success/";
 }
 
 function getCurrentPolicy() {
@@ -678,6 +703,13 @@ function Icon({ name }) {
         <path d="M7 4h4l1 5-3 1c1.2 2.5 2.8 4.1 5 5l1-3 5 1v4c0 1-1 2-2 2C10.5 19 5 13.5 5 6c0-1 1-2 2-2Z" />
       </>
     ),
+    cart: (
+      <>
+        <path d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.5h7.8a2 2 0 0 0 1.9-1.4L21 7H6" />
+        <circle cx="9" cy="19" r="1.5" />
+        <circle cx="18" cy="19" r="1.5" />
+      </>
+    ),
   };
 
   return (
@@ -687,7 +719,7 @@ function Icon({ name }) {
   );
 }
 
-function Header() {
+function Header({ cartCount, onCartOpen }) {
   return (
     <>
       <div className="top-bar">
@@ -714,13 +746,10 @@ function Header() {
         >
           {phone}
         </a>
-        <a
-          className="button button-small"
-          href={shopUrl}
-          onClick={() => trackEvent("shop_click", { location: "header" })}
-        >
-          Shop lifts
-        </a>
+        <button className="header-cart" type="button" onClick={onCartOpen} aria-label={`Open cart with ${cartCount} items`} title="Shopping cart">
+          <Icon name="cart" />
+          <span>{cartCount}</span>
+        </button>
       </div>
       </header>
     </>
@@ -1677,7 +1706,7 @@ function RangeControl({ label, min, max, step, value, suffix, onChange }) {
   );
 }
 
-function ProductSection() {
+function ProductSection({ onAddToCart }) {
   return (
     <section className="section products-section" id="lifts">
       <div className="section-heading split">
@@ -1685,7 +1714,7 @@ function ProductSection() {
           <h2>Shop by the job the lift needs to do</h2>
           <p>
             Compare garage-ready lifts by capacity, use case, starting price,
-            and monthly payment before you ask Oasis for final fit help.
+            and monthly payment, then add the right lift to your cart.
           </p>
         </div>
         <a
@@ -1743,18 +1772,9 @@ function ProductSection() {
               <div className="product-bottom">
                 <strong>{formatCurrency(product.price)}</strong>
                 <div className="product-links">
-                  <a
-                    className="product-quote-link"
-                    href="#quote"
-                    onClick={() =>
-                      trackEvent("quote_start", {
-                        location: "product_card",
-                        product_id: product.id,
-                      })
-                    }
-                  >
-                    Get quote
-                  </a>
+                  <button className="product-add-button" type="button" onClick={() => onAddToCart(product)}>
+                    Add to cart
+                  </button>
                   <a
                     className="text-link"
                     href={getProductUrl(product.handle)}
@@ -1819,7 +1839,7 @@ function getProductHighlights(product) {
   ];
 }
 
-function ProductPage({ product }) {
+function ProductPage({ product, onAddToCart }) {
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const relatedProducts = products.filter((item) => item.id !== product.id).slice(0, 3);
   const productHighlights = getProductHighlights(product);
@@ -1844,18 +1864,13 @@ function ProductPage({ product }) {
             <em>Financing from about ${getMonthlyPayment(product)}/mo</em>
           </div>
           <div className="product-page-actions">
-            <a
+            <button
               className="button"
-              href="#quote"
-              onClick={() =>
-                trackEvent("quote_start", {
-                  location: "product_page_hero",
-                  product_id: product.id,
-                })
-              }
+              type="button"
+              onClick={() => onAddToCart(product)}
             >
-              Get quote
-            </a>
+              Add to cart
+            </button>
             <a
               className="button button-secondary"
               href={phoneHref}
@@ -1991,6 +2006,300 @@ function ProductPage({ product }) {
       </section>
     </article>
   );
+}
+
+function PurchasePanel({ product }) {
+  const [quantity, setQuantity] = useState(1);
+  const [fulfillment, setFulfillment] = useState("shipping");
+  const [zip, setZip] = useState("");
+  const [addressType, setAddressType] = useState("residential");
+  const [hasDock, setHasDock] = useState(false);
+  const [installation, setInstallation] = useState(false);
+  const [freight, setFreight] = useState(null);
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [showDeliveredForm, setShowDeliveredForm] = useState(false);
+  const [deliveredForm, setDeliveredForm] = useState({
+    name: "", phone: "", email: "", address1: "", address2: "", city: "", state: "", notes: "",
+  });
+
+  const needsManualQuote = quantity > 1 || freight?.status === "manual";
+  const freightAmount = fulfillment === "pickup" ? 0 : freight?.status === "known" ? freight.amount / 100 : null;
+  const installationAmount = installation && freight?.installationAmount != null ? freight.installationAmount / 100 : 0;
+  const estimatedTotal = freightAmount == null ? null : product.price * quantity + freightAmount + installationAmount;
+
+  useEffect(() => {
+    setFreight(fulfillment === "pickup" ? { status: "known", amount: 0, installationAmount: null } : null);
+    setStatus("");
+  }, [fulfillment, zip, addressType, hasDock]);
+
+  async function calculateFreight() {
+    setBusy(true);
+    setStatus("Checking delivery options...");
+    try {
+      const response = await fetch("/api/freight-quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id, fulfillment, zip, addressType, hasDock }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to check freight");
+      setFreight(result);
+      setStatus(result.status === "known" ? "Delivered price is ready." : "This delivery needs a custom freight quote.");
+      return result;
+    } catch (error) {
+      setStatus(error.message);
+      return null;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function beginCheckout() {
+    if (!freight) {
+      await calculateFreight();
+      return;
+    }
+    if (needsManualQuote) {
+      setShowDeliveredForm(true);
+      return;
+    }
+    setBusy(true);
+    setStatus("Opening secure checkout...");
+    trackEvent("begin_checkout", { product_id: product.id, value: estimatedTotal, currency: "USD" });
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id, quantity, fulfillment, zip, addressType, hasDock, installation }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        if (result.requiresQuote) setShowDeliveredForm(true);
+        throw new Error(result.error || "Unable to start checkout");
+      }
+      window.location.assign(result.url);
+    } catch (error) {
+      setStatus(error.message);
+      setBusy(false);
+    }
+  }
+
+  async function submitDeliveredPrice(event) {
+    event.preventDefault();
+    setBusy(true);
+    setStatus("Sending your delivered-price request...");
+    try {
+      const response = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...deliveredForm, zip, addressType, hasDock, quantity, installation,
+          draftType: "delivered_price",
+          productInterest: { id: product.id, name: product.name },
+          sourceUrl: window.location.href,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to send request");
+      trackEvent("delivered_price_request_sent", { product_id: product.id, quantity });
+      trackGoogleAdsQuoteConversion();
+      setStatus("Request sent. Oasis will confirm freight, installation, and final pricing with you.");
+      setShowDeliveredForm(false);
+    } catch (error) {
+      setStatus(error.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="purchase-panel" id="purchase" aria-labelledby="purchase-title">
+      <div className="purchase-heading">
+        <div><span className="product-panel-kicker">Secure online purchase</span><h2 id="purchase-title">Build your order</h2></div>
+        <div className="purchase-price"><span>Lift price</span><strong>{formatCurrency(product.price)}</strong></div>
+      </div>
+      <div className="purchase-grid">
+        <div className="purchase-options">
+          <label><span>Quantity</span><select value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>{[1, 2, 3, 4].map((number) => <option value={number} key={number}>{number}</option>)}</select></label>
+          <fieldset><legend>Delivery method</legend><label><input checked={fulfillment === "shipping"} name="fulfillment" onChange={() => setFulfillment("shipping")} type="radio" /> Freight shipping</label><label><input checked={fulfillment === "pickup"} name="fulfillment" onChange={() => setFulfillment("pickup")} type="radio" /> Local pickup</label></fieldset>
+          {fulfillment === "shipping" ? <>
+            <label><span>Delivery ZIP</span><input inputMode="numeric" maxLength="5" onChange={(event) => setZip(event.target.value.replace(/\D/g, ""))} placeholder="5-digit ZIP" value={zip} /></label>
+            <fieldset><legend>Delivery location</legend><label><input checked={addressType === "residential"} name="addressType" onChange={() => setAddressType("residential")} type="radio" /> Residential</label><label><input checked={addressType === "commercial"} name="addressType" onChange={() => setAddressType("commercial")} type="radio" /> Commercial</label></fieldset>
+            <label className="purchase-check"><input checked={hasDock} onChange={(event) => setHasDock(event.target.checked)} type="checkbox" /> Forklift or loading dock available</label>
+          </> : null}
+          <label className="purchase-check"><input checked={installation} onChange={(event) => setInstallation(event.target.checked)} type="checkbox" /> Include professional installation</label>
+          <button className="button button-secondary purchase-calculate" disabled={busy} onClick={calculateFreight} type="button">Check delivered price</button>
+        </div>
+        <aside className="order-summary">
+          <span className="product-panel-kicker">Order summary</span>
+          <dl><div><dt>{product.name} x {quantity}</dt><dd>{formatCurrency(product.price * quantity)}</dd></div><div><dt>Freight</dt><dd>{freightAmount == null ? "To be confirmed" : freightAmount === 0 ? "Included" : formatCurrency(freightAmount)}</dd></div><div><dt>Installation</dt><dd>{!installation ? "Not selected" : freight?.installationAmount == null ? "To be confirmed" : formatCurrency(installationAmount)}</dd></div><div className="order-total"><dt>Estimated total</dt><dd>{estimatedTotal == null ? "Get delivered price" : formatCurrency(estimatedTotal)}</dd></div></dl>
+          <p>Taxes are shown in secure checkout when applicable. Final freight and installation must be confirmed before payment.</p>
+          <button className="button purchase-button" disabled={busy} onClick={beginCheckout} type="button">{!freight ? "Check delivered price" : needsManualQuote ? "Get delivered price" : "Buy now securely"}</button>
+          <a className="button button-secondary purchase-quote" href="#quote" onClick={() => trackEvent("quote_start", { location: "purchase_panel", product_id: product.id })}>Get a quote</a>
+          <a className="purchase-call" href={phoneHref}>Prefer to talk? {phone}</a>
+          {status ? <div className="purchase-status" role="status">{status}</div> : null}
+        </aside>
+      </div>
+      {showDeliveredForm ? <form className="delivered-price-form" onSubmit={submitDeliveredPrice}>
+        <div><span className="product-panel-kicker">Custom freight request</span><h3>Get your exact delivered price</h3><p>For multiple units, special access, or installation, Oasis confirms the exact total before you pay.</p></div>
+        {[["name", "Full name", "text"], ["phone", "Phone number", "tel"], ["email", "Email", "email"], ["address1", "Delivery address", "text"], ["address2", "Suite / unit (optional)", "text"], ["city", "City", "text"], ["state", "State", "text"]].map(([name, label, type]) => <label key={name}><span>{label}</span><input required={name !== "address2"} type={type} value={deliveredForm[name]} onChange={(event) => setDeliveredForm((current) => ({ ...current, [name]: event.target.value }))} /></label>)}
+        <label className="delivered-notes"><span>Notes</span><textarea value={deliveredForm.notes} onChange={(event) => setDeliveredForm((current) => ({ ...current, notes: event.target.value }))} /></label>
+        <button className="button" disabled={busy} type="submit">Send delivered-price request</button>
+      </form> : null}
+    </section>
+  );
+}
+
+function CartDrawer({ cart, isOpen, onClose, onQuantityChange, onRemove }) {
+  const [fulfillment, setFulfillment] = useState("shipping");
+  const [zip, setZip] = useState("");
+  const [addressType, setAddressType] = useState("residential");
+  const [hasDock, setHasDock] = useState(false);
+  const [installation, setInstallation] = useState(false);
+  const [status, setStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const canCheckoutDirectly = cart.length === 1 && itemCount === 1;
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKeyDown = (event) => event.key === "Escape" && onClose();
+    document.body.classList.add("cart-open");
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.classList.remove("cart-open");
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  async function checkout() {
+    if (!canCheckoutDirectly) {
+      trackEvent("quote_start", { location: "cart", item_count: itemCount });
+      onClose();
+      window.location.href = "/#quote";
+      return;
+    }
+
+    setIsLoading(true);
+    setStatus("");
+    try {
+      const item = cart[0];
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: item.product.id,
+          quantity: item.quantity,
+          fulfillment,
+          zip,
+          addressType,
+          hasDock,
+          installation,
+        }),
+      });
+      const result = await response.json();
+      if (response.status === 409 || result.requiresQuote) {
+        setStatus("This order needs a delivered-price quote before payment.");
+        return;
+      }
+      if (!response.ok || !result.url) throw new Error(result.error || "Checkout is unavailable.");
+      trackEvent("begin_checkout", { currency: "USD", value: subtotal, items: [{ item_id: item.product.id, quantity: 1 }] });
+      window.location.assign(result.url);
+    } catch (error) {
+      setStatus(error.message || "Checkout is unavailable. Please call Oasis.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className={`cart-shell ${isOpen ? "is-open" : ""}`} aria-hidden={!isOpen}>
+      <button className="cart-backdrop" type="button" onClick={onClose} aria-label="Close cart" />
+      <aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+        <header>
+          <div><span>Your cart</span><h2 id="cart-title">{itemCount ? `${itemCount} item${itemCount === 1 ? "" : "s"}` : "Cart is empty"}</h2></div>
+          <button type="button" onClick={onClose} aria-label="Close cart">×</button>
+        </header>
+
+        {cart.length ? (
+          <>
+            <div className="cart-lines">
+              {cart.map(({ product, quantity }) => (
+                <article className="cart-line" key={product.id}>
+                  <a href={getProductUrl(product.handle)}><img src={product.image} alt="" /></a>
+                  <div>
+                    <a href={getProductUrl(product.handle)}>{product.name}</a>
+                    <span>{product.capacity} capacity</span>
+                    <strong>{formatCurrency(product.price * quantity)}</strong>
+                    <div className="cart-line-actions">
+                      <label><span className="sr-only">Quantity for {product.name}</span><select value={quantity} onChange={(event) => onQuantityChange(product.id, Number(event.target.value))}>{[1, 2, 3, 4].map((value) => <option value={value} key={value}>{value}</option>)}</select></label>
+                      <button type="button" onClick={() => onRemove(product.id)}>Remove</button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="cart-checkout-options">
+              <div className="cart-choice">
+                <button className={fulfillment === "shipping" ? "active" : ""} type="button" onClick={() => setFulfillment("shipping")}>Freight shipping</button>
+                <button className={fulfillment === "pickup" ? "active" : ""} type="button" onClick={() => setFulfillment("pickup")}>Local pickup</button>
+              </div>
+              {fulfillment === "shipping" ? <>
+                <label><span>Delivery ZIP</span><input value={zip} onChange={(event) => setZip(event.target.value.replace(/\D/g, "").slice(0, 5))} inputMode="numeric" placeholder="5-digit ZIP" /></label>
+                <div className="cart-choice">
+                  <button className={addressType === "residential" ? "active" : ""} type="button" onClick={() => setAddressType("residential")}>Residential</button>
+                  <button className={addressType === "commercial" ? "active" : ""} type="button" onClick={() => setAddressType("commercial")}>Commercial</button>
+                </div>
+                <label className="cart-checkbox"><input type="checkbox" checked={hasDock} onChange={(event) => setHasDock(event.target.checked)} /> Forklift or dock available</label>
+              </> : null}
+              <label className="cart-checkbox"><input type="checkbox" checked={installation} onChange={(event) => setInstallation(event.target.checked)} /> Add professional installation</label>
+            </div>
+
+            <footer>
+              <div><span>Subtotal</span><strong>{formatCurrency(subtotal)}</strong></div>
+              <p>Freight, installation, and tax are confirmed before payment.</p>
+              {status ? <p className="cart-status" role="status">{status}</p> : null}
+              <button className="button cart-checkout-button" type="button" disabled={isLoading} onClick={checkout}>
+                {isLoading ? "Opening secure checkout..." : canCheckoutDirectly ? "Continue to checkout" : "Get delivered quote"}
+              </button>
+            </footer>
+          </>
+        ) : <div className="cart-empty"><p>Your selected lifts will appear here.</p><a className="button" href="/#lifts" onClick={onClose}>Shop lifts</a></div>}
+      </aside>
+    </div>
+  );
+}
+
+function OrderSuccessPage() {
+  const [order, setOrder] = useState(null);
+  const [message, setMessage] = useState("Confirming your payment...");
+  useEffect(() => {
+    const sessionId = new URLSearchParams(window.location.search).get("session_id");
+    if (!sessionId) { setMessage("The checkout session is missing. Please contact Oasis for help."); return undefined; }
+    let stopped = false;
+    async function load(attempt = 0) {
+      try {
+        const response = await fetch(`/api/order?session_id=${encodeURIComponent(sessionId)}`);
+        if (!response.ok) throw new Error("processing");
+        const result = await response.json();
+        if (stopped) return;
+        setOrder(result);
+        setMessage("");
+        const claim = await fetch("/api/claim-purchase-conversion", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId }) });
+        const conversion = await claim.json();
+        if (conversion.claimed) trackEvent("purchase", { transaction_id: conversion.transactionId, value: conversion.value, currency: conversion.currency });
+      } catch {
+        if (attempt < 8 && !stopped) setTimeout(() => load(attempt + 1), 1500);
+        else if (!stopped) setMessage("Payment received. Your confirmation is still processing; Oasis can verify it by phone.");
+      }
+    }
+    load();
+    return () => { stopped = true; };
+  }, []);
+  return <section className="order-success" id="top"><div><span className="product-panel-kicker">Order confirmation</span><h1>{order ? "Your lift is ordered." : "Finalizing your order."}</h1>{message ? <p>{message}</p> : <><p>Thank you{order.customerName ? `, ${order.customerName}` : ""}. Oasis will contact you about {order.fulfillmentMethod === "pickup" ? "pickup" : "delivery"}.</p><dl><div><dt>Order</dt><dd>{order.orderNumber}</dd></div><div><dt>Product</dt><dd>{order.product}</dd></div><div><dt>Quantity</dt><dd>{order.quantity}</dd></div><div><dt>Total paid</dt><dd>{formatCurrency(order.total / 100)}</dd></div><div><dt>Email</dt><dd>{order.email || "Provided at checkout"}</dd></div><div><dt>Phone</dt><dd>{order.phone || "Provided at checkout"}</dd></div></dl></>}<div className="product-page-actions"><a className="button" href="/#lifts">Continue shopping</a><a className="button button-secondary" href={phoneHref}>Call Oasis</a></div></div></section>;
 }
 
 function ProductNotFound() {
@@ -2484,17 +2793,17 @@ function Footer() {
   );
 }
 
-function MobileActionBar() {
+function MobileActionBar({ cartCount, onCartOpen }) {
   return (
     <nav className="mobile-action-bar" aria-label="Mobile quick actions">
       <a href={getSectionHref("lifts")} onClick={() => trackEvent("shop_click", { location: "mobile_action_bar" })}>
         <Icon name="tag" />
         <span>Shop</span>
       </a>
-      <a href={getSectionHref("quote")} onClick={() => trackEvent("quote_start", { location: "mobile_action_bar" })}>
-        <Icon name="finance" />
-        <span>Quote</span>
-      </a>
+      <button type="button" onClick={onCartOpen} aria-label={`Open cart with ${cartCount} items`}>
+        <Icon name="cart" />
+        <span>Cart {cartCount ? `(${cartCount})` : ""}</span>
+      </button>
       <a href={phoneHref} onClick={() => trackEvent("phone_click", { location: "mobile_action_bar" })}>
         <Icon name="call" />
         <span>Call</span>
@@ -2504,10 +2813,45 @@ function MobileActionBar() {
 }
 
 export default function App() {
+  const [cart, setCart] = useState(readCart);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const currentProduct = getCurrentProduct();
   const currentPolicy = getCurrentPolicy();
   const isProductPath = isProductRoute();
   const isCampaignPath = isCampaignRoute();
+  const isOrderSuccessPath = isOrderSuccessRoute();
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      cartStorageKey,
+      JSON.stringify(cart.map(({ product, quantity }) => ({ id: product.id, quantity }))),
+    );
+  }, [cart]);
+
+  useEffect(() => {
+    if (!isOrderSuccessPath) return;
+    setCart([]);
+    window.localStorage.removeItem(cartStorageKey);
+  }, [isOrderSuccessPath]);
+
+  function addToCart(product) {
+    setCart((current) => {
+      const existing = current.find((item) => item.product.id === product.id);
+      if (existing) return current.map((item) => item.product.id === product.id ? { ...item, quantity: Math.min(4, item.quantity + 1) } : item);
+      return [...current, { product, quantity: 1 }];
+    });
+    setIsCartOpen(true);
+    trackEvent("add_to_cart", { currency: "USD", value: product.price, items: [{ item_id: product.id, item_name: product.name, price: product.price, quantity: 1 }] });
+  }
+
+  function changeCartQuantity(productId, quantity) {
+    setCart((current) => current.map((item) => item.product.id === productId ? { ...item, quantity } : item));
+  }
+
+  function removeFromCart(productId) {
+    setCart((current) => current.filter((item) => item.product.id !== productId));
+  }
 
   useEffect(() => {
     const baseUrl = "https://www.oasiscarlifts.com";
@@ -2517,7 +2861,11 @@ export default function App() {
     let canonical = `${baseUrl}/`;
     let image = `${baseUrl}/assets/oasis-hero-background-wide.jpg`;
 
-    if (isCampaignPath) {
+    if (isOrderSuccessPath) {
+      title = "Order confirmation | Oasis Car Lifts";
+      description = "Secure Oasis Car Lifts order confirmation.";
+      canonical = `${baseUrl}/order-success`;
+    } else if (isCampaignPath) {
       title = "Get a Garage Car Lift Quote | Oasis Car Lifts";
       description =
         "Request a fast Oasis Car Lifts quote for 2-post and 4-post garage lifts. Confirm fit, freight, financing, and install details with real phone support.";
@@ -2549,7 +2897,7 @@ export default function App() {
     setMeta("twitter:title", title);
     setMeta("twitter:description", description);
     setMeta("twitter:image", image);
-  }, [currentPolicy, currentProduct, isCampaignPath]);
+  }, [currentPolicy, currentProduct, isCampaignPath, isOrderSuccessPath]);
 
   useEffect(() => {
     const scrollToCurrentHash = () => {
@@ -2573,16 +2921,18 @@ export default function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <Header />
+      <Header cartCount={cartCount} onCartOpen={() => setIsCartOpen(true)} />
       <main id="main">
-        {currentPolicy ? (
+        {isOrderSuccessPath ? (
+          <OrderSuccessPage />
+        ) : currentPolicy ? (
           <PolicyPage policy={currentPolicy} />
         ) : isCampaignPath ? (
           <CampaignLandingPage />
         ) : isProductPath ? (
           currentProduct ? (
             <>
-              <ProductPage product={currentProduct} />
+              <ProductPage product={currentProduct} onAddToCart={addToCart} />
               <QuoteSystem productInterest={currentProduct} />
               <Questions />
               <FinalCta />
@@ -2596,7 +2946,7 @@ export default function App() {
             <HeroTrustSlider />
             <JobFinder />
             <ShopBanner />
-            <ProductSection />
+            <ProductSection onAddToCart={addToCart} />
             <QuoteSystem />
             <QuoteProcessBanner />
             <Process />
@@ -2606,7 +2956,8 @@ export default function App() {
         )}
       </main>
       <Footer />
-      <MobileActionBar />
+      {!isOrderSuccessPath ? <CartDrawer cart={cart} isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} onQuantityChange={changeCartQuantity} onRemove={removeFromCart} /> : null}
+      {!isOrderSuccessPath ? <MobileActionBar cartCount={cartCount} onCartOpen={() => setIsCartOpen(true)} /> : null}
     </>
   );
 }

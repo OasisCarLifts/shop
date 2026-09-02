@@ -9,6 +9,7 @@ const campaignPage = {
     "Request a fast Oasis Car Lifts quote for 2-post and 4-post garage lifts. Confirm fit, freight, financing, and install details with real phone support.",
   image: "/assets/quote-to-process-banner.png",
 };
+const orderSuccessPath = "/order-success";
 const policyPages = [
   {
     path: "/privacy-policy",
@@ -195,6 +196,16 @@ const campaignOutputDir = path.join(distDir, campaignPath.slice(1));
 await mkdir(campaignOutputDir, { recursive: true });
 await writeFile(path.join(campaignOutputDir, "index.html"), withCampaignMeta(template));
 
+const orderSuccessOutputDir = path.join(distDir, orderSuccessPath.slice(1));
+await mkdir(orderSuccessOutputDir, { recursive: true });
+await writeFile(
+  path.join(orderSuccessOutputDir, "index.html"),
+  template
+    .replace(/<title>.*?<\/title>/, "<title>Order confirmation | Oasis Car Lifts</title>")
+    .replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${baseUrl}${orderSuccessPath}" />`)
+    .replace("</head>", '    <meta name="robots" content="noindex, nofollow" />\n  </head>'),
+);
+
 await Promise.all(
   policyPages.map(async (policy) => {
     const outputDir = path.join(distDir, policy.path.slice(1));
@@ -204,5 +215,5 @@ await Promise.all(
 );
 
 console.log(
-  `Generated ${products.length} static product pages, 1 campaign landing page, and ${policyPages.length} policy pages.`,
+  `Generated ${products.length} static product pages, 1 campaign page, 1 order confirmation page, and ${policyPages.length} policy pages.`,
 );
