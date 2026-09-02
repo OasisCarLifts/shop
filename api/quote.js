@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { randomBytes } from "node:crypto";
 import { getRedis } from "./_lib/redis.js";
 
-const quoteRecipient = "contact@oasiscarlifts.com";
+const quoteRecipients = ["contact@oasiscarlifts.com", "24alkabbansammy@gmail.com"];
 const fallbackFromEmail = "Oasis Car Lifts <quotes@oasiscarlifts.com>";
 
 function clean(value) {
@@ -136,7 +136,7 @@ export default async function handler(request, response) {
   try {
     const { data, error } = await resend.emails.send({
       from,
-      to: quoteRecipient,
+      to: quoteRecipients,
       subject,
       text: buildPlainText(payload),
       html: buildHtml(payload),
