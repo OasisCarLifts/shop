@@ -65,7 +65,7 @@
       url("/assets/oasis-hero-background-v2.jpg") 63% center / auto 108% no-repeat,
       #050506;
     height: auto;
-    min-height: min(650px, calc(100svh - 64px));
+    min-height: min(600px, calc(100svh - 64px));
     padding: 0 var(--mobile-gutter);
   }
 
@@ -75,14 +75,14 @@
 
   .hero-shell {
     align-items: flex-end;
-    min-height: min(650px, calc(100svh - 64px));
+    min-height: min(600px, calc(100svh - 64px));
     width: 100%;
   }
 
   .hero-copy {
     max-width: 100%;
     overflow: visible;
-    padding: 15rem 0 1.6rem;
+    padding: 8rem 0 1.6rem;
     transform: translateY(-24px);
     width: 100%;
   }
