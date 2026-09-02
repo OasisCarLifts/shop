@@ -2617,18 +2617,21 @@ legend,
 }
 
 .product-bottom {
+  align-items: center;
   border-top: 1px solid var(--line-light);
-  align-items: flex-end;
-  justify-content: space-between;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
   margin-top: auto;
   padding-top: 0.9rem;
 }
 
 .product-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  justify-content: flex-end;
+  align-items: center;
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: auto auto;
+  justify-content: end;
 }
 
 .product-bottom strong {
@@ -2638,6 +2641,8 @@ legend,
   font-variant-numeric: tabular-nums;
   font-weight: 800;
   letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .product-financing {
@@ -2675,6 +2680,7 @@ legend,
   min-height: 36px;
   padding: 0 0.9rem;
   text-transform: uppercase;
+  white-space: nowrap;
   transition:
     background 160ms ease,
     border-color 160ms ease,

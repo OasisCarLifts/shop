@@ -504,6 +504,22 @@ function trackEvent(eventName, params = {}) {
   }
 }
 
+function trackGoogleAdsQuoteConversion() {
+  if (typeof window === "undefined" || typeof window.gtag !== "function") {
+    return;
+  }
+
+  try {
+    window.gtag("event", "conversion", {
+      send_to: "AW-18357027696/oZsSCKvbveccEPCGqLFE",
+      value: 1,
+      currency: "USD",
+    });
+  } catch {
+    // Conversion tracking must never interfere with a successful quote request.
+  }
+}
+
 function getRecommendation({ useCase, ceiling, weight, width }) {
   const scoredProducts = products.map((product) => {
     let score = 0;
@@ -998,6 +1014,7 @@ function CampaignQuoteCard() {
       trackEvent("quote_request_sent", {
         product_id: "google_campaign",
       });
+      trackGoogleAdsQuoteConversion();
       setQuoteStatus(
         result.id
           ? `Quote request sent. Reference ${result.id.slice(0, 8)}. Oasis will call back soon.`
@@ -2062,6 +2079,7 @@ function QuoteSystem({ productInterest = null }) {
       trackEvent("quote_request_sent", {
         product_id: productInterest?.id ?? "general",
       });
+      trackGoogleAdsQuoteConversion();
       setQuoteStatus(
         result.id
           ? `Quote request sent. Reference ${result.id.slice(0, 8)}. Oasis will call back soon.`
