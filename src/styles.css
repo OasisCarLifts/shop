@@ -3572,6 +3572,12 @@ body.cart-open { overflow: hidden; }
   padding: 1rem;
 }
 
+@media (min-width: 1181px) {
+  .quote-human-card {
+    margin-top: clamp(2.75rem, 4vw, 4rem);
+  }
+}
+
 .quote-human-card .icon,
 .quote-financing-note .icon {
   color: var(--red);
