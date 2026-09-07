@@ -5236,6 +5236,14 @@ body.cart-open { overflow: hidden; }
   animation: heroCopyReveal 760ms 1.55s var(--ease-luxury-out) forwards;
 }
 
+.hero-mobile-benefits {
+  display: none;
+}
+
+.mobile-menu-link {
+  display: none;
+}
+
 .hero-benefits article {
   align-items: center;
   display: flex;

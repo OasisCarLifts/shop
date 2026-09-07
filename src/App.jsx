@@ -756,6 +756,13 @@ function Icon({ name }) {
         <circle cx="18" cy="19" r="1.5" />
       </>
     ),
+    menu: (
+      <>
+        <path d="M4 7h16" />
+        <path d="M4 12h16" />
+        <path d="M4 17h16" />
+      </>
+    ),
   };
 
   return (
@@ -777,6 +784,9 @@ function Header({ cartCount, onCartOpen }) {
       <header className="site-header">
       <a className="brand" href={getSectionHref("top")} aria-label="Oasis Car Lifts home">
         <img src="/assets/oasis-logo-white.png" alt="Oasis Car Lifts" />
+      </a>
+      <a className="mobile-menu-link" href={getSectionHref("finder")} aria-label="Browse lift options">
+        <Icon name="menu" />
       </a>
       <nav className="main-nav" aria-label="Main navigation">
         <a href={getSectionHref("top")}>Home</a>
@@ -966,6 +976,20 @@ function Hero() {
               <article>
                 <Icon name="wrench" />
                 <strong>Built to last</strong>
+              </article>
+            </div>
+            <div className="hero-mobile-benefits" aria-label="Oasis purchase benefits">
+              <article>
+                <Icon name="truck" />
+                <strong>Free freight</strong>
+              </article>
+              <article>
+                <Icon name="warranty" />
+                <strong>36-mo warranty</strong>
+              </article>
+              <article>
+                <Icon name="call" />
+                <strong>Expert support</strong>
               </article>
             </div>
           </div>
