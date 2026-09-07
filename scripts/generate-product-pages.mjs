@@ -71,6 +71,30 @@ const products = [
     description:
       "Triple stacker 3-car lift for collectors, vertical vehicle parking, and high-capacity garage storage.",
   },
+  {
+    name: "Air pump sliding jack - 3,500 lb capacity",
+    handle: "air-pump-sliding-jack-3500lb-capacity",
+    price: "995",
+    image: "/assets/product-air-pump-sliding-jack.png",
+    description:
+      "Air-powered 3,500 lb sliding bridge jack for wheel-free service on compatible 4-post car lifts.",
+  },
+  {
+    name: "Oasis Car Lifts 4-post car lift - 9,000 lb capacity",
+    handle: "halo-lifts-4-post-car-lift-9000-lbs-capacity",
+    price: "3049",
+    image: "/assets/product-halo-4post.png",
+    description:
+      "Oasis Car Lifts 9,000 lb 4-post car lift for vehicle storage, parking, and home garages.",
+  },
+  {
+    name: "Hand pump sliding jack - 3,500 lb capacity",
+    handle: "hand-pump-sliding-jack-3500lb-capacity-4-post-car-lift",
+    price: "799",
+    image: "/assets/product-hand-pump-sliding-jack.png",
+    description:
+      "Hand-operated 3,500 lb sliding bridge jack for wheel-free service on compatible 4-post car lifts.",
+  },
 ];
 
 function escapeHtml(value) {

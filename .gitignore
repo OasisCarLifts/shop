@@ -3,3 +3,6 @@ dist/
 *.log
 mockup-background-options.html
 qa-hero-candidates/
+
+.vercel
+.env.production.audit

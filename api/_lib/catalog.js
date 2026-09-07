@@ -23,6 +23,24 @@ export const serverCatalog = {
     handle: "4-post-tripple-stacker-3-car-lift",
     unitAmount: 1594900,
   },
+  "air-pump-sliding-jack": {
+    id: "air-pump-sliding-jack",
+    name: "Air pump sliding jack",
+    handle: "air-pump-sliding-jack-3500lb-capacity",
+    unitAmount: 99500,
+  },
+  "halo-4post": {
+    id: "halo-4post",
+    name: "Oasis Car Lifts 4-post car lift",
+    handle: "halo-lifts-4-post-car-lift-9000-lbs-capacity",
+    unitAmount: 304900,
+  },
+  "hand-pump-sliding-jack": {
+    id: "hand-pump-sliding-jack",
+    name: "Hand pump sliding jack",
+    handle: "hand-pump-sliding-jack-3500lb-capacity-4-post-car-lift",
+    unitAmount: 79900,
+  },
 };
 
 export function getServerProduct(productId) {
@@ -74,4 +92,19 @@ export function getFreightQuote({ zip, addressType, hasDock }) {
 export function validateQuantity(value) {
   const quantity = Number(value);
   return Number.isInteger(quantity) && quantity >= 1 && quantity <= 4 ? quantity : null;
+}
+
+export function normalizeCheckoutItems(value) {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 7) return null;
+
+  const seen = new Set();
+  const items = [];
+  for (const candidate of value) {
+    const product = getServerProduct(candidate?.productId);
+    const quantity = validateQuantity(candidate?.quantity);
+    if (!product || !quantity || seen.has(product.id)) return null;
+    seen.add(product.id);
+    items.push({ product, quantity });
+  }
+  return items;
 }

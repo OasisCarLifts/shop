@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import Stripe from "stripe";
-import { getFreightQuote, getServerProduct, validateQuantity } from "./_lib/catalog.js";
+import { getFreightQuote, normalizeCheckoutItems } from "./_lib/catalog.js";
 import { saveOrder } from "./_lib/redis.js";
 
 const stripe = process.env.STRIPE_RESTRICTED_KEY
@@ -29,16 +29,17 @@ export default async function handler(request, response) {
   if (!stripe) return response.status(500).json({ error: "Stripe is not configured" });
 
   const body = request.body ?? {};
-  const product = getServerProduct(body.productId);
-  const quantity = validateQuantity(body.quantity);
+  const requestedItems = Array.isArray(body.items)
+    ? body.items
+    : [{ productId: body.productId, quantity: body.quantity }];
+  const items = normalizeCheckoutItems(requestedItems);
   const fulfillment = body.fulfillment === "pickup" ? "pickup" : "shipping";
   const installationRequested = body.installation === true;
   const addressType = body.addressType === "commercial" ? "commercial" : "residential";
   const hasDock = body.hasDock === true;
   const zip = clean(body.zip, 5);
 
-  if (!product || !quantity) return response.status(400).json({ error: "Invalid product or quantity" });
-  if (quantity > 1) return response.status(409).json({ error: "Multiple units require a delivered-price quote" });
+  if (!items) return response.status(400).json({ error: "Invalid cart items" });
 
   const freight = fulfillment === "pickup"
     ? { status: "known", amount: 0, zone: "Local pickup" }
@@ -52,16 +53,14 @@ export default async function handler(request, response) {
 
   const orderNumber = makeOrderNumber();
   const siteUrl = getSiteUrl(request);
-  const lineItems = [
-    {
+  const lineItems = items.map(({ product, quantity }) => ({
       price_data: {
         currency: "usd",
         product_data: { name: product.name, metadata: { oasis_product_id: product.id } },
         unit_amount: product.unitAmount,
       },
       quantity,
-    },
-  ];
+    }));
 
   if (freight.amount > 0) {
     lineItems.push({
@@ -74,18 +73,14 @@ export default async function handler(request, response) {
     });
   }
 
-  if (installationAmount > 0) {
-    lineItems.push({
-      price_data: {
-        currency: "usd",
-        product_data: { name: `Installation - ${product.name}` },
-        unit_amount: installationAmount,
-      },
-      quantity: 1,
-    });
-  }
-
   try {
+    const productSubtotal = items.reduce(
+      (sum, { product, quantity }) => sum + product.unitAmount * quantity,
+      0,
+    );
+    const itemSummary = items.map(({ product, quantity }) => `${product.name} x ${quantity}`).join(", ");
+    const productIds = items.map(({ product }) => product.id).join(",");
+    const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       integration_identifier: `oasisweb_${randomBytes(4).toString("hex")}`,
@@ -99,9 +94,10 @@ export default async function handler(request, response) {
         : {}),
       metadata: {
         order_number: orderNumber,
-        product_id: product.id,
-        product_name: product.name,
-        quantity: String(quantity),
+        product_id: items.length === 1 ? items[0].product.id : "multi-item-cart",
+        product_ids: productIds,
+        product_name: items.length === 1 ? items[0].product.name : "Multiple Oasis products",
+        quantity: String(totalQuantity),
         fulfillment,
         freight_amount: String(freight.amount),
         freight_zone: freight.zone,
@@ -112,7 +108,9 @@ export default async function handler(request, response) {
         supplied_zip: zip,
       },
       success_url: `${siteUrl}/order-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/products/${product.handle}?checkout=cancelled`,
+      cancel_url: items.length === 1
+        ? `${siteUrl}/products/${items[0].product.handle}?checkout=cancelled`
+        : `${siteUrl}/#lifts`,
     });
 
     await saveOrder({
@@ -120,14 +118,20 @@ export default async function handler(request, response) {
       customerName: "",
       email: "",
       phone: "",
-      product: product.name,
-      productId: product.id,
-      quantity,
-      productSubtotal: product.unitAmount * quantity,
+      product: itemSummary,
+      productId: items.length === 1 ? items[0].product.id : "multi-item-cart",
+      items: items.map(({ product, quantity }) => ({
+        productId: product.id,
+        name: product.name,
+        quantity,
+        unitAmount: product.unitAmount,
+      })),
+      quantity: totalQuantity,
+      productSubtotal,
       freight: freight.amount,
       installation: installationAmount,
       tax: 0,
-      total: product.unitAmount * quantity + freight.amount + installationAmount,
+      total: productSubtotal + freight.amount + installationAmount,
       shippingAddress: null,
       fulfillmentMethod: fulfillment,
       stripeCheckoutSessionId: session.id,

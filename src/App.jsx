@@ -262,6 +262,21 @@ const footerPolicyLinks = [
 
 const products = [
   {
+    id: "halo-4post",
+    name: "Oasis Car Lifts 4-post car lift",
+    shortName: "Oasis 4-post lift",
+    price: 3049,
+    capacity: "9,000 lb",
+    bestFor: "Vehicle storage, parking, and home garages",
+    detail: "A drive-on 4-post lift with a 9,000 lb rated capacity.",
+    image: "/assets/product-halo-4post.png",
+    handle: "halo-lifts-4-post-car-lift-9000-lbs-capacity",
+    minHeight: null,
+    maxWeight: 9000,
+    minWidth: null,
+    type: "4-post",
+  },
+  {
     id: "xl-4post",
     name: "Extra large 4-post lift",
     shortName: "XL 4-post",
@@ -276,22 +291,6 @@ const products = [
     maxWeight: 9000,
     minWidth: 11,
     type: "4-post",
-  },
-  {
-    id: "clear-floor-2post",
-    name: "Clear-floor 2-post lift",
-    shortName: "Clear-floor 2-post",
-    price: 3699,
-    monthly: 103,
-    capacity: "12,000 lb",
-    bestFor: "Service work and heavy vehicles",
-    detail: "Open floor access for serious maintenance work.",
-    image: "/assets/product-clear-floor-2post.png",
-    handle: "oasis-lifts-clear-floor-2-post-car-lift-12-000-lbs-capacity",
-    minHeight: 11.5,
-    maxWeight: 12000,
-    minWidth: 10.5,
-    type: "2-post",
   },
   {
     id: "base-plate-2post",
@@ -310,6 +309,22 @@ const products = [
     type: "2-post",
   },
   {
+    id: "clear-floor-2post",
+    name: "Clear-floor 2-post lift",
+    shortName: "Clear-floor 2-post",
+    price: 3699,
+    monthly: 103,
+    capacity: "12,000 lb",
+    bestFor: "Service work and heavy vehicles",
+    detail: "Open floor access for serious maintenance work.",
+    image: "/assets/product-clear-floor-2post.png",
+    handle: "oasis-lifts-clear-floor-2-post-car-lift-12-000-lbs-capacity",
+    minHeight: 11.5,
+    maxWeight: 12000,
+    minWidth: 10.5,
+    type: "2-post",
+  },
+  {
     id: "triple-stacker",
     name: "Triple stacker 3-car lift",
     shortName: "Triple stacker",
@@ -324,6 +339,36 @@ const products = [
     maxWeight: 9000,
     minWidth: 11,
     type: "4-post",
+  },
+  {
+    id: "air-pump-sliding-jack",
+    name: "Air pump sliding jack",
+    shortName: "Air pump sliding jack",
+    price: 995,
+    capacity: "3,500 lb",
+    bestFor: "Fast wheel-free service on compatible 4-post lifts",
+    detail: "Air-powered sliding bridge jack for lifting a vehicle from the runways.",
+    image: "/assets/product-air-pump-sliding-jack.png",
+    handle: "air-pump-sliding-jack-3500lb-capacity",
+    minHeight: null,
+    maxWeight: 3500,
+    minWidth: null,
+    type: "Accessory",
+  },
+  {
+    id: "hand-pump-sliding-jack",
+    name: "Hand pump sliding jack",
+    shortName: "Hand pump sliding jack",
+    price: 799,
+    capacity: "3,500 lb",
+    bestFor: "Wheel-free service on compatible 4-post lifts",
+    detail: "Manually operated sliding bridge jack for controlled lifting from the runways.",
+    image: "/assets/product-hand-pump-sliding-jack.png",
+    handle: "hand-pump-sliding-jack-3500lb-capacity-4-post-car-lift",
+    minHeight: null,
+    maxWeight: 3500,
+    minWidth: null,
+    type: "Accessory",
   },
 ];
 
@@ -405,6 +450,7 @@ function getProductUrl(handle) {
 }
 
 function getMonthlyPayment(product) {
+  if (!Number.isFinite(product.price)) return null;
   return product.monthly ?? Math.floor(product.price / 36);
 }
 
@@ -546,7 +592,7 @@ function trackGoogleAdsQuoteConversion() {
 }
 
 function getRecommendation({ useCase, ceiling, weight, width }) {
-  const scoredProducts = products.map((product) => {
+  const scoredProducts = products.filter((product) => !product.quoteOnly).map((product) => {
     let score = 0;
     const fitsHeight = ceiling >= product.minHeight;
     const fitsWidth = width >= product.minWidth;
@@ -1756,25 +1802,44 @@ function ProductSection({ onAddToCart }) {
               <span className="product-capacity">{product.capacity} capacity</span>
               <h3>{product.name}</h3>
               <p>{product.bestFor}</p>
-              <div className="product-specs" aria-label={`${product.name} quick specs`}>
-                <span>
-                  <strong>{product.minHeight} ft</strong>
-                  Min ceiling
-                </span>
-                <span>
-                  <strong>{product.minWidth} ft</strong>
-                  Bay width
-                </span>
-              </div>
-              <div className="product-financing">
-                Financing from <strong>${getMonthlyPayment(product)}/mo</strong>
-              </div>
+              {!product.minHeight || !product.minWidth ? (
+                <div className="product-specs product-specs-single" aria-label={`${product.name} quick specs`}>
+                  <span>
+                    <strong>{product.capacity}</strong>
+                    Rated capacity
+                  </span>
+                </div>
+              ) : (
+                <div className="product-specs" aria-label={`${product.name} quick specs`}>
+                  <span>
+                    <strong>{product.minHeight} ft</strong>
+                    Min ceiling
+                  </span>
+                  <span>
+                    <strong>{product.minWidth} ft</strong>
+                    Bay width
+                  </span>
+                </div>
+              )}
+              {product.quoteOnly ? (
+                <div className="product-financing">Call for current pricing and compatibility</div>
+              ) : (
+                <div className="product-financing">
+                  Financing from <strong>${getMonthlyPayment(product)}/mo</strong>
+                </div>
+              )}
               <div className="product-bottom">
-                <strong>{formatCurrency(product.price)}</strong>
+                <strong>{product.quoteOnly ? "Request pricing" : formatCurrency(product.price)}</strong>
                 <div className="product-links">
-                  <button className="product-add-button" type="button" onClick={() => onAddToCart(product)}>
-                    Add to cart
-                  </button>
+                  {product.quoteOnly ? (
+                    <a className="product-add-button" href={`${getProductUrl(product.handle)}#quote`}>
+                      Get quote
+                    </a>
+                  ) : (
+                    <button className="product-add-button" type="button" onClick={() => onAddToCart(product)}>
+                      Add to cart
+                    </button>
+                  )}
                   <a
                     className="text-link"
                     href={getProductUrl(product.handle)}
@@ -1824,6 +1889,14 @@ function getProductHighlights(product) {
     "Freight and delivery help available",
   ];
 
+  if (product.type === "Accessory") {
+    return [
+      "Designed for wheel-free service",
+      "Confirm runway and lift compatibility",
+      ...baseHighlights,
+    ];
+  }
+
   if (product.type === "4-post") {
     return [
       "Drive-on setup for storage and parking",
@@ -1859,18 +1932,22 @@ function ProductPage({ product, onAddToCart }) {
           <h1 id="product-title">{product.name}</h1>
           <p>{product.bestFor}. {product.detail}</p>
           <div className="product-page-price">
-            <span>Starting at</span>
-            <strong>{formatCurrency(product.price)}</strong>
-            <em>Financing from about ${getMonthlyPayment(product)}/mo</em>
+            <span>{product.quoteOnly ? "Current pricing" : "Starting at"}</span>
+            <strong>{product.quoteOnly ? "Request a quote" : formatCurrency(product.price)}</strong>
+            <em>{product.quoteOnly ? "Oasis will confirm price, availability, and compatibility" : `Financing from about $${getMonthlyPayment(product)}/mo`}</em>
           </div>
           <div className="product-page-actions">
-            <button
-              className="button"
-              type="button"
-              onClick={() => onAddToCart(product)}
-            >
-              Add to cart
-            </button>
+            {product.quoteOnly ? (
+              <a className="button" href="#quote">Request pricing</a>
+            ) : (
+              <button
+                className="button"
+                type="button"
+                onClick={() => onAddToCart(product)}
+              >
+                Add to cart
+              </button>
+            )}
             <a
               className="button button-secondary"
               href={phoneHref}
@@ -1924,11 +2001,11 @@ function ProductPage({ product, onAddToCart }) {
           </article>
           <article>
             <span>Minimum ceiling</span>
-            <strong>{product.minHeight} ft</strong>
+            <strong>{product.minHeight ? `${product.minHeight} ft` : "Confirm fit"}</strong>
           </article>
           <article>
             <span>Usable bay width</span>
-            <strong>{product.minWidth} ft</strong>
+            <strong>{product.minWidth ? `${product.minWidth} ft` : "Confirm fit"}</strong>
           </article>
           <article>
             <span>Lift style</span>
@@ -1998,7 +2075,7 @@ function ProductPage({ product, onAddToCart }) {
                 <img src={relatedProduct.image} alt={relatedProduct.name} />
                 <span>{relatedProduct.capacity}</span>
                 <strong>{relatedProduct.name}</strong>
-                <em>{formatCurrency(relatedProduct.price)}</em>
+                <em>{relatedProduct.quoteOnly ? "Request pricing" : formatCurrency(relatedProduct.price)}</em>
               </a>
             ))}
           </div>
@@ -2161,7 +2238,6 @@ function CartDrawer({ cart, isOpen, onClose, onQuantityChange, onRemove }) {
   const [isLoading, setIsLoading] = useState(false);
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const canCheckoutDirectly = cart.length === 1 && itemCount === 1;
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -2175,23 +2251,14 @@ function CartDrawer({ cart, isOpen, onClose, onQuantityChange, onRemove }) {
   }, [isOpen, onClose]);
 
   async function checkout() {
-    if (!canCheckoutDirectly) {
-      trackEvent("quote_start", { location: "cart", item_count: itemCount });
-      onClose();
-      window.location.href = "/#quote";
-      return;
-    }
-
     setIsLoading(true);
     setStatus("");
     try {
-      const item = cart[0];
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productId: item.product.id,
-          quantity: item.quantity,
+          items: cart.map(({ product, quantity }) => ({ productId: product.id, quantity })),
           fulfillment,
           zip,
           addressType,
@@ -2205,7 +2272,16 @@ function CartDrawer({ cart, isOpen, onClose, onQuantityChange, onRemove }) {
         return;
       }
       if (!response.ok || !result.url) throw new Error(result.error || "Checkout is unavailable.");
-      trackEvent("begin_checkout", { currency: "USD", value: subtotal, items: [{ item_id: item.product.id, quantity: 1 }] });
+      trackEvent("begin_checkout", {
+        currency: "USD",
+        value: subtotal,
+        items: cart.map(({ product, quantity }) => ({
+          item_id: product.id,
+          item_name: product.name,
+          price: product.price,
+          quantity,
+        })),
+      });
       window.location.assign(result.url);
     } catch (error) {
       setStatus(error.message || "Checkout is unavailable. Please call Oasis.");
@@ -2263,7 +2339,7 @@ function CartDrawer({ cart, isOpen, onClose, onQuantityChange, onRemove }) {
               <p>Freight, installation, and tax are confirmed before payment.</p>
               {status ? <p className="cart-status" role="status">{status}</p> : null}
               <button className="button cart-checkout-button" type="button" disabled={isLoading} onClick={checkout}>
-                {isLoading ? "Opening secure checkout..." : canCheckoutDirectly ? "Continue to checkout" : "Get delivered quote"}
+                {isLoading ? "Opening secure checkout..." : "Continue to checkout"}
               </button>
             </footer>
           </>
