@@ -874,9 +874,11 @@ function TypewriterHeroTitle() {
   const [isDoneTyping, setIsDoneTyping] = useState(false);
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const useStaticTitle = window.matchMedia(
+      "(prefers-reduced-motion: reduce), (max-width: 767px)",
+    ).matches;
 
-    if (reduceMotion) {
+    if (useStaticTitle) {
       setTypedText(fullText);
       setIsDoneTyping(true);
       return undefined;

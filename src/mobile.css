@@ -76,7 +76,7 @@
     background:
       linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.08) 48%, rgba(0, 0, 0, 0.88) 100%),
       linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.34) 58%, rgba(0, 0, 0, 0.04) 100%),
-      url("/assets/oasis-mobile-hero-premium.png") right center / auto 100% no-repeat,
+      url("/assets/oasis-mobile-hero-premium.jpg") right center / auto 100% no-repeat,
       #050506;
     height: auto;
     min-height: clamp(560px, calc(100svh - 160px), 590px);
@@ -127,7 +127,22 @@
   }
 
   .hero-title-typing {
+    animation: mobileHeroReveal 440ms 80ms ease-out both;
     min-height: 3.76em;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-title-measure {
+    opacity: 1;
+  }
+
+  .hero-title-measure > span {
+    display: block;
+  }
+
+  .hero-type-lines {
+    display: none;
   }
 
   .hero h1 .hero-type-line {
@@ -135,12 +150,14 @@
   }
 
   .hero-rule {
+    animation: mobileHeroReveal 400ms 150ms ease-out both;
     height: 2px;
     margin-top: 0.9rem;
     width: 48px;
   }
 
   .hero p {
+    animation: mobileHeroReveal 400ms 210ms ease-out both;
     color: rgba(255, 255, 255, 0.78);
     font-size: 0.93rem;
     line-height: 1.5;
@@ -151,6 +168,7 @@
   }
 
   .hero-actions {
+    animation: mobileHeroReveal 400ms 260ms ease-out both;
     display: grid;
     gap: 10px;
     grid-template-columns: 1.1fr 1fr;
@@ -181,6 +199,7 @@
   }
 
   .hero-mobile-benefits {
+    animation: mobileHeroReveal 400ms 310ms ease-out both;
     align-items: stretch;
     border-top: 1px solid rgba(255, 255, 255, 0.18);
     display: grid;
@@ -225,6 +244,18 @@
 
   .hero-trust-slider {
     display: none;
+  }
+
+  @keyframes mobileHeroReveal {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .hero-trust-slider p {
@@ -1253,6 +1284,7 @@
   .hero-title-typing,
   .hero p,
   .hero-actions,
+  .hero-mobile-benefits,
   .hero-rule {
     animation: none !important;
     filter: none !important;
