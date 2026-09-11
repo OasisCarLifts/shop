@@ -1,4 +1,7 @@
 /* Mobile is intentionally isolated here and loaded after the desktop system. */
+.campaign-mobile-hero, .campaign-mobile-call, .campaign-mobile-actions { display: none; }
+.campaign-strip small, .campaign-strip .benefit-mobile-title { display: none; }
+.campaign-strip b { font-weight: inherit; }
 @media (max-width: 767px) {
   :root {
     --mobile-gutter: 18px;
@@ -1017,21 +1020,26 @@
   }
 
   .campaign-strip {
-    background: #0c0c0e;
-    border-block: 1px solid #29292c;
+    background: #101112;
+    border-block: 1px solid #252629;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 var(--mobile-gutter);
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px 24px;
+    scroll-margin-top: 20px;
   }
 
   .campaign-strip article {
-    border-bottom: 1px solid #29292c;
-    min-height: 88px;
-    padding: 1rem 0.75rem;
+    background: none;
+    border: 0;
+    min-height: 90px;
+    padding: 20px 0;
+    justify-content: flex-start;
+    gap: 16px;
   }
 
   .campaign-strip article + article {
-    border-left: 1px solid #29292c;
+    border-left: 0;
+    border-top: 1px solid #28292c;
   }
 
   .campaign-strip article:nth-last-child(-n + 2) {
@@ -1039,16 +1047,26 @@
   }
 
   .campaign-strip span {
-    font-size: 0.68rem;
-    line-height: 1.25;
+    font-family: var(--body);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+    text-transform: none;
+    color: #f4f4f5;
   }
+
+  .campaign-strip .icon { width: 24px; height: 24px; flex: 0 0 24px; color: #d8424f; }
+  .campaign-strip .benefit-desktop-title { display: none; }
+  .campaign-strip .benefit-mobile-title { display: block; }
+  .campaign-strip small { display: block; margin-top: 5px; font-size: 13px; font-weight: 400; line-height: 1.55; letter-spacing: 0; color: #aaaeb5; }
 
   .campaign-testimonial {
     align-items: center;
     display: grid;
     gap: 2rem;
     grid-template-columns: 1fr;
-    padding: 3.5rem var(--mobile-gutter);
+    padding: 2.5rem 24px;
   }
 
   .campaign-testimonial-copy {
@@ -1056,13 +1074,19 @@
   }
 
   .campaign-testimonial h2 {
-    font-size: clamp(2.2rem, 11vw, 3rem);
-    line-height: 0.94;
-    margin-top: 0.6rem;
+    font-family: var(--body);
+    font-size: clamp(1.75rem, 8.2vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    margin-top: 0.75rem;
+    max-width: 19ch;
+    text-wrap: balance;
   }
 
   .campaign-testimonial-copy > p {
-    font-size: 0.95rem;
+    font-size: 1rem;
+    line-height: 1.6;
     margin-top: 1rem;
   }
 
@@ -1074,6 +1098,17 @@
   .campaign-testimonial-points span {
     min-height: 48px;
     padding-block: 0.7rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .campaign-testimonial .campaign-text-link {
+    font-family: var(--body);
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    min-height: 44px;
+    margin-top: 1rem;
+    text-transform: none;
   }
 
   .campaign-testimonial-video {
@@ -1291,4 +1326,34 @@
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* Approved mobile quote hero. These rules do not affect the desktop campaign. */
+@media (max-width: 767px) {
+  .campaign-header.site-header { height: 72px; min-height: 72px; justify-content: space-between; padding-inline: 24px; background: #090a0b; }
+  .campaign-header .brand img { width: 132px; height: auto; }
+  .campaign-header .mobile-menu-link { display: none; }
+  .campaign-mobile-call { display: flex; gap: 8px; align-items: center; min-height: 44px; font-size: 16px; font-weight: 800; }
+  .campaign-mobile-call .icon { width: 22px; height: 22px; color: white; }
+  .campaign-mobile-hero { display: block; background: #090a0b; position: relative; isolation: isolate; }
+  .campaign-mobile-copy { position: relative; z-index: 1; padding: 28px 24px 0; }
+  .campaign-mobile-eyebrow { margin: 0 0 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .24em; color: #eee; }
+  .campaign-mobile-copy h1 { font-family: var(--body); font-size: clamp(40px, 11.7vw, 76px); font-weight: 800; line-height: 1.02; letter-spacing: -.055em; margin: 0; color: white; }
+  .campaign-mobile-copy h1 span { color: #c9c9cb; }
+  .campaign-mobile-description { font-size: 17px; line-height: 1.45; max-width: 36ch; margin: 18px 0 20px; color: #eee; }
+  .campaign-mobile-quote { display: flex; align-items: center; justify-content: center; gap: 14px; background: #c60820; border-radius: 6px; min-height: 54px; color: white; font-size: 18px; font-weight: 800; }
+  .campaign-mobile-quote span { font-size: 25px; font-weight: 500; }
+  .campaign-mobile-guidance { text-align: center; font-size: 13px; line-height: 1.4; color: #eee; margin: 12px 0 0; }
+  .campaign-mobile-photo { display: block; position: relative; z-index: 0; width: 100%; height: auto; margin-top: -60px; mask-image: linear-gradient(to bottom, transparent, black 22%); }
+  .campaign-mobile-benefits { display: flex; align-items: center; justify-content: space-around; background: white; color: #151619; min-height: 62px; gap: 6px; padding: 12px 14px; }
+  .campaign-mobile-benefits > span { display: flex; align-items: center; gap: 5px; font-size: clamp(11px, 3vw, 16px); white-space: nowrap; font-weight: 600; }
+  .campaign-mobile-benefits svg { width: 18px; height: 18px; fill: none; stroke: #c60820; stroke-width: 3; }
+  .campaign-page .campaign-hero { padding: 24px 18px; background: #f5f5f3; display: block; }
+  .campaign-page .campaign-hero > .campaign-hero-media, .campaign-page .campaign-hero > .campaign-hero-copy, .campaign-page .campaign-hero::before { display: none; }
+  .campaign-page .campaign-quote-card { scroll-margin-top: 20px; box-shadow: none; }
+  .campaign-mobile-actions { display: grid; grid-template-columns: 1fr 1.65fr; gap: 10px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid #e5e5e5; }
+  .campaign-mobile-actions a { min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #232730; border-radius: 6px; color: #151619; font-size: 17px; font-weight: 800; }
+  .campaign-mobile-actions a:last-child { background: #c60820; border-color: #c60820; color: white; }
+  .campaign-mobile-actions .icon { width: 22px; height: 22px; }
+  .campaign-mobile-quote:focus-visible, .campaign-mobile-actions a:focus-visible, .campaign-mobile-call:focus-visible { outline: 3px solid #f6b94a; outline-offset: 3px; }
 }

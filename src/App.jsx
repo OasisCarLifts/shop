@@ -781,13 +781,14 @@ function Header({ cartCount, onCartOpen }) {
           {phone}
         </a>
       </div>
-      <header className="site-header">
+      <header className={isCampaignRoute() ? "site-header campaign-header" : "site-header"}>
       <a className="brand" href={getSectionHref("top")} aria-label="Oasis Car Lifts home">
         <img src="/assets/oasis-logo-white.png" alt="Oasis Car Lifts" />
       </a>
       <a className="mobile-menu-link" href={getSectionHref("finder")} aria-label="Browse lift options">
         <Icon name="menu" />
       </a>
+      {isCampaignRoute() && <a className="campaign-mobile-call" href={phoneHref} onClick={() => trackEvent("phone_click", { location: "google_campaign_header" })}><Icon name="call" />Call</a>}
       <nav className="main-nav" aria-label="Main navigation">
         <a href={getSectionHref("top")}>Home</a>
         <a href={getSectionHref("lifts")}>Shop</a>
@@ -1228,6 +1229,19 @@ function CampaignLandingPage() {
 
   return (
     <div className="campaign-page" id="top">
+      <section className="campaign-mobile-hero" aria-labelledby="mobile-campaign-title">
+        <div className="campaign-mobile-copy">
+          <p className="campaign-mobile-eyebrow">Oasis car lifts</p>
+          <h1 id="mobile-campaign-title">Your garage.<br />On another<br /><span>level.</span></h1>
+          <p className="campaign-mobile-description">Find the right lift for your space, with expert help before you buy.</p>
+          <a className="campaign-mobile-quote" href="#quote" onClick={() => trackEvent("quote_start", { location: "google_campaign_mobile_hero" })}>Get my lift quote <span aria-hidden="true">→</span></a>
+          <p className="campaign-mobile-guidance">Fit, freight &amp; financing guidance</p>
+        </div>
+        <img className="campaign-mobile-photo" src="/assets/campaign-mobile-garage.webp" alt="Two cars parked vertically on a four-post lift in a garage" width="1000" height="1333" fetchPriority="high" />
+        <div className="campaign-mobile-benefits" aria-label="Expert help before you buy">
+          {["Fit advice", "Delivery help", "Real support"].map((benefit) => <span key={benefit}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>{benefit}</span>)}
+        </div>
+      </section>
       <section className="campaign-hero" aria-labelledby="campaign-title">
         <div className="campaign-hero-media" aria-hidden="true">
           <img src="/assets/quote-to-process-banner.png" alt="" />
@@ -1292,22 +1306,22 @@ function CampaignLandingPage() {
         <CampaignQuoteCard />
       </section>
 
-      <section className="campaign-strip" aria-label="Oasis quote advantages">
+      <section className="campaign-strip" id="quote-advantages" aria-label="Oasis quote advantages">
         <article>
           <Icon name="call" />
-          <span>Real phone support</span>
+          <span>Real phone support<small>Talk through your lift with a specialist.</small></span>
         </article>
         <article>
           <Icon name="finance" />
-          <span>Affirm, Klarna, and Shop Pay options</span>
+          <span><b className="benefit-desktop-title">Affirm, Klarna, and Shop Pay options</b><b className="benefit-mobile-title">Flexible financing</b><small>Explore Affirm, Klarna &amp; Shop Pay options.</small></span>
         </article>
         <article>
           <Icon name="wrench" />
-          <span>Install planning before checkout</span>
+          <span><b className="benefit-desktop-title">Install planning before checkout</b><b className="benefit-mobile-title">Installation guidance</b><small>Plan your setup before you order.</small></span>
         </article>
         <article>
           <Icon name="truck" />
-          <span>Freight options available</span>
+          <span><b className="benefit-desktop-title">Freight options available</b><b className="benefit-mobile-title">Delivery planning</b><small>Review freight options for your location.</small></span>
         </article>
       </section>
 
@@ -2896,6 +2910,12 @@ function Footer() {
 }
 
 function MobileActionBar({ cartCount, onCartOpen }) {
+  if (isCampaignRoute()) {
+    return <nav className="campaign-mobile-actions" aria-label="Mobile quick actions">
+      <a href={phoneHref} onClick={() => trackEvent("phone_click", { location: "google_campaign_mobile_bar" })}><Icon name="call" />Call</a>
+      <a href="#quote" onClick={() => trackEvent("quote_start", { location: "google_campaign_mobile_bar" })}>Get a quote <span aria-hidden="true">→</span></a>
+    </nav>;
+  }
   return (
     <nav className="mobile-action-bar" aria-label="Mobile quick actions">
       <a href={getSectionHref("lifts")} onClick={() => trackEvent("shop_click", { location: "mobile_action_bar" })}>
