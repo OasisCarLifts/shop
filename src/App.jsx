@@ -947,10 +947,14 @@ function Hero() {
             </div>
             <TypewriterHeroTitle />
             <div className="hero-rule" aria-hidden="true"></div>
-            <p>
-              Premium car lift solutions that combine elegant design, superior
-              protection, and lasting quality.
-            </p>
+            <a
+              className="hero-fit-link"
+              href="#finder"
+              onClick={() => trackEvent("lift_finder_start", { location: "mobile_hero" })}
+            >
+              <span>Not sure which lift?</span>
+              <strong>Find your garage fit <span aria-hidden="true">→</span></strong>
+            </a>
             <div className="hero-actions">
               <a
                 className="button"

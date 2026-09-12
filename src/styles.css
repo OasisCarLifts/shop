@@ -6775,3 +6775,30 @@ body.cart-open { overflow: hidden; }
     grid-template-columns: 1fr;
   }
 }
+
+/* Keep the quote headline calm and readable across desktop and tablet columns. */
+@media (min-width: 768px) {
+  .campaign-hero h1 {
+    font-family: var(--body);
+    font-size: clamp(42px, 4.2vw, 68px);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    max-width: 100%;
+    text-wrap: initial;
+  }
+
+  .campaign-hero h1 span + span {
+    margin-top: 0.06em;
+  }
+
+  .campaign-hero-kicker {
+    margin-bottom: 1.5rem;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .campaign-hero-copy > p {
+    margin-top: 1.75rem;
+    max-width: 48ch;
+  }
+}
